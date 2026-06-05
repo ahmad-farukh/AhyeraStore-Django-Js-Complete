@@ -1,0 +1,141 @@
+<!-- {% extends "base.html" %}
+
+{% load static %}
+
+
+<!-- {% block title %}AI Assistant - Ahyera Store{% endblock %} -->
+
+{% block extra_css %}
+<style>
+    .font-logo {
+        font-family: 'Playfair Display', serif;
+    }
+
+    .hover-lift {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .hover-lift:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 20px 40px rgba(20, 94, 253, 0.2);
+    }
+
+    .pulse {
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+
+        0%,
+        100% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.7;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Page Content -->
+<div class="max-w-7xl mx-auto px-6 py-20 text-center">
+    <h1 class="text-6xl font-logo font-bold bg-gradient-to-r from-blue-600 to-pink-600 bg-clip-text text-transparent">
+        Welcome to Ahyera Store
+    </h1>
+    <p class="text-xl text-gray-600 mt-6">Your luxury shopping experience just got smarter</p>
+    <p class="text-gray-500 mt-4">Need help? Click the AI assistant button in the bottom right
+        corner!</p>
+</div>
+
+<!-- AI CHATBOT WIDGET (Floating) -->
+<div id="ai-chatbot" class="fixed bottom-6 right-6 z-50">
+    <!-- Floating Button -->
+    <button id="chat-toggle" onclick="toggleChat()"
+        class="w-16 h-16 bg-gradient-to-r from-blue-600 to-pink-600 text-white rounded-full shadow-2xl flex items-center justify-center text-3xl hover:scale-110 transition transform pulse">
+        <i class="fas fa-robot"></i>
+    </button>
+
+    <!-- Chat Window -->
+    <div id="chat-window"
+        class="absolute bottom-20 right-0 w-96 bg-white rounded-3xl shadow-2xl overflow-hidden transform scale-0 transition-all duration-300 origin-bottom-right">
+        <div class="bg-gradient-to-r from-blue-600 to-pink-600 text-white p-5 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                    <i class="fas fa-robot text-xl"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-lg">Ahyera AI Assistant</h3>
+                    <p class="text-xs opacity-90">Always here to help</p>
+                </div>
+            </div>
+            <button onclick="toggleChat()" class="text-white hover:bg-white/20 p-2 rounded-lg transition">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <!-- Chat Body -->
+        <div id="chat-body" class="h-96 overflow-y-auto p-5 space-y-4 bg-gray-50">
+            <div class="flex items-start gap-3">
+                <div
+                    class="w-10 h-10 bg-gradient-to-r from-blue-600 to-pink-600 rounded-full flex items-center justify-center text-white flex-shrink-0">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="bg-white rounded-2xl px-5 py-3 shadow-md max-w-xs">
+                    <p class="text-gray-800">Hello{% if user.is_authenticated %}, {{
+                        user.first_name|default:user.username }}{% endif %}! I'm Ahyera's AI
+                        Assistant</p>
+                    <p class="text-sm text-gray-500 mt-1">How can I help you today?</p>
+                </div>
+            </div>
+
+            <!-- Quick Action Capsules -->
+            <div class="grid grid-cols-1 gap-3 mt-4">
+                <button onclick="sendQuick('return')"
+                    class="bg-white hover:bg-pink-50 border border-pink-200 rounded-2xl p-4 text-left flex items-center gap-4 hover-lift transition">
+                    <i class="fas fa-undo text-2xl text-pink-600"></i>
+                    <div>
+                        <p class="font-bold text-gray-800">Returns & Exchange</p>
+                        <p class="text-sm text-gray-600">30-day easy returns</p>
+                    </div>
+                </button>
+                <button onclick="sendQuick('help')"
+                    class="bg-white hover:bg-purple-50 border border-purple-200 rounded-2xl p-4 text-left flex items-center gap-4 hover-lift transition">
+                    <i class="fas fa-headset text-2xl text-purple-600"></i>
+                    <div>
+                        <p class="font-bold text-gray-800">Help Center</p>
+                        <p class="text-sm text-gray-600">FAQs & Support</p>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="p-4 bg-white border-t">
+            <form onsubmit="event.preventDefault(); sendMessage();" class="flex gap-3">
+                <input type="text" id="user-input" placeholder="Type your message..."
+                    class="flex-1 px-5 py-3 border border-gray-300 rounded-full focus:outline-none focus:border-pink-600 transition">
+                <button type="submit"
+                    class="bg-gradient-to-r from-blue-600 to-pink-600 text-white w-12 h-12 rounded-full flex items-center justify-center hover:scale-110 transition">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </form>
+            <p class="text-xs text-gray-500 text-center mt-3">
+                Powered by Ahyera AI •
+                <a href="{% url 'core:contact' %}" class="text-pink-600 cursor-pointer hover:underline">Connect to
+                    Human</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Pass Django template variables to JavaScript
+    // const userAuthenticated = {% if user.is_authenticated %}true{% else %} false{% endif %};
+</script>
+<script src="{% static 'js/ai_chatbot.js' %}"></script>
+{% endblock %} -->

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ahyera Store - AI Search</title>
+<script defer src="./ai_search.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    .font-heading { font-family: 'Playfair Display', serif; }
+    .font-body { font-family: 'Inter', sans-serif; }
+    .search-suggestion { transition: all 0.2s; }
+    .search-suggestion:hover { background: #fef2f2; transform: translateX(8px); }
+  </style>
+</head>
+<body class="bg-gray-50 font-body">
+
+  <!-- Header -->
+  <header class="bg-white shadow-sm sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-5 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <div class="w-12 h-12 bg-gradient-to-r from-blue-600 to-blue-800 rounded-full flex items-center justify-center text-white font-bold text-xl">AS</div>
+        <h1 class="text-3xl font-heading font-bold text-blue-700">Ahyera Store</h1>
+      </div>
+      <div class="flex items-center gap-6">
+        <a href="#" class="hover:text-pink-600"><i class="far fa-heart text-xl"></i></a>
+        <a href="#" class="relative hover:text-pink-600">
+          <i class="fas fa-shopping-bag text-xl"></i>
+          <span class="absolute -top-1 -right-2 bg-pink-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">3</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section with AI Search -->
+  <section class="py-20 bg-gradient-to-b from-pink-50 to-white">
+    <div class="max-w-5xl mx-auto px-4 text-center">
+      <h2 class="text-5xl md:text-6xl font-heading font-bold text-gray-900 mb-6">
+        Find Your Dream Outfit with <span class="text-pink-600">AI</span>
+      </h2>
+      <p class="text-xl text-gray-600 mb-10">Type, speak or upload an image — we’ll find the perfect match instantly</p>
+
+      <!-- AI Search Bar -->
+      <div class="relative max-w-3xl mx-auto">
+        <div id="search-container" class="bg-white rounded-3xl shadow-2xl p-6 border-2 border-dashed border-pink-200 hover:border-pink-400 transition">
+          
+          <!-- Text Search -->
+          <div class="relative mb-6">
+            <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-pink-500 text-xl"></i>
+            <input 
+              type="text" 
+              id="text-search" 
+              placeholder="Search by name, style, occasion... e.g. red bridal lehenga, anarkali for wedding"
+              class="w-full pl-14 pr-12 py-5 text-lg rounded-2xl border focus:outline-none focus:ring-4 focus:ring-pink-200 transition"
+            />
+            <button class="absolute right-4 top-1/2 -translate-y-1/2 bg-pink-600 text-white p-3 rounded-xl hover:bg-pink-700">
+              <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+
+          <!-- Predictive Suggestions -->
+          <div id="suggestions" class="hidden bg-white border rounded-2xl shadow-lg max-h-96 overflow-y-auto">
+            <div class="p-4 border-b">
+              <p class="text-sm font-medium text-pink-600 flex items-center gap-2">
+                <i class="fas fa-brain"></i> AI Suggestions
+              </p>
+            </div>
+            <div id="suggestion-list" class="py-2"></div>
+          </div>
+
+          <!-- Divider -->
+          <div class="text-center text-gray-400 my-6">OR</div>
+
+          <!-- Image Upload Area -->
+          <div 
+            id="drop-zone"
+            class="border-2 border-dashed border-gray-300 rounded-2xl p-12 text-center cursor-pointer hover:border-pink-500 hover:bg-pink-50 transition"
+            onclick="document.getElementById('image-upload').click()"
+            ondrop="handleDrop(event)"
+            ondragover="event.preventDefault()"
+            ondragleave="this.classList.remove('bg-pink-50', 'border-pink-500')"
+          >
+            <i class="fas fa-cloud-upload-alt text-6xl text-gray-400 mb-4"></i>
+            <p class="text-xl font-medium text-gray-700">Drag & drop an image here</p>
+            <p class="text-gray-500 mt-2">or <span class="text-pink-600 font-semibold">click to upload</span></p>
+            <input type="file" id="image-upload" accept="image/*" class="hidden" onchange="handleFileSelect(event)" />
+            
+            <div id="uploaded-preview" class="mt-6 hidden">
+              <img id="preview-img" class="mx-auto max-h-64 rounded-xl shadow-lg" />
+              <p class="mt-4 text-green-600 font-medium">Searching for similar dresses...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Did You Mean Suggestions -->
+        <div id="did-you-mean" class="mt-6 hidden">
+          <p class="text-sm text-gray-600">Did you mean:</p>
+          <div class="flex flex-wrap gap-3 mt-3">
+            <button class="px-5 py-2 bg-pink-100 text-pink-700 rounded-full hover:bg-pink-200 transition">red bridal lehenga</button>
+            <button class="px-5 py-2 bg-pink-100 text-pink-700 rounded-full hover:bg-pink-200 transition">maroon velvet saree</button>
+            <button class="px-5 py-2 bg-pink-100 text-pink-700 rounded-full hover:bg-pink-200 transition">pakistani red dress</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-white py-12">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+      <h1 class="text-4xl font-heading font-bold mb-3">Ahyera Store</h1>
+      <p class="text-gray-400">Pakistan's First AI-Powered Luxury Fashion Store</p>
+      <p class="text-gray-500 text-sm mt-8">© 2025 Ahyera Store. Made with passion in Pakistan</p>
+    </div>
+  </footer>
+
+ 
+</body>
+</html>

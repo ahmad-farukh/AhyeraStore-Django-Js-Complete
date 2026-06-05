@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Checkout - Ahyera Store</title>
+  <script defer src="./checkout.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    .font-heading { font-family: 'Playfair Display', serif; }
+    .font-body { font-family: 'Inter', sans-serif; }
+    .payment-active { border-color: #e11d48; background: #fdf2f8; }
+    .disabled-btn { opacity: 0.5; cursor: not-allowed; }
+  </style>
+</head>
+<body class="bg-gray-50 font-body">
+
+  <!-- Header -->
+  <header class="bg-white shadow-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-5 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <div class="w-12 h-12 bg-gradient-to-r from-blue-600 to-blue-800 rounded-full flex items-center justify-center text-white font-bold text-xl">AS</div>
+        <h1 class="text-3xl font-heading font-bold text-blue-700">Ahyera Store</h1>
+      </div>
+      <a href="cart.html" class="text-pink-600 font-bold">Back to Cart</a>
+    </div>
+  </header>
+
+  <section class="py-12">
+    <div class="max-w-6xl mx-auto px-4">
+      <h1 class="text-4xl md:text-5xl font-heading font-bold text-center mb-12 text-gray-800">
+        Secure Checkout
+      </h1>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+
+        <!-- Left Side -->
+        <div class="lg:col-span-2 space-y-8">
+
+          <!-- Contact -->
+          <div class="bg-white rounded-2xl shadow-lg p-8">
+            <h2 class="text-2xl font-bold mb-6">Contact Information</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <input type="text" id="name" placeholder="Full Name" required class="w-full px-6 py-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500">
+              <input type="tel" id="phone" placeholder="Phone (03xx-xxxxxxx)" required class="w-full px-6 py-4 rounded-xl border focus:outline-none focus:ring-2 focus:ring-pink-500">
+            </div>
+            <input type="email" id="email" placeholder="Email (optional)" class="w-full px-6 py-4 rounded-xl border mt-6 focus:outline-none focus:ring-2 focus:ring-pink-500">
+          </div>
+
+          <!-- Address -->
+          <div class="bg-white rounded-2xl shadow-lg p-8">
+            <h2 class="text-2xl font-bold mb-6">Delivery Address</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <select id="city" required class="w-full px-6 py-4 rounded-xl border focus:outline-none focus:ring-2 focus:ring-pink-500">
+                <option value="">Select City</option>
+                <option>Lahore</option><option>Karachi</option><option>Islamabad</option><option>Rawalpindi</option>
+                <option>Faisalabad</option><option>Multan</option><option>Peshawar</option><option>Other</option>
+              </select>
+              <input type="text" id="area" placeholder="Area / Society" required class="w-full px-6 py-4 rounded-xl border">
+            </div>
+            <textarea id="address" placeholder="House no, Street, Nearby Landmark" rows="4" required class="w-full px-6 py-4 rounded-xl border mt-6 focus:outline-none focus:ring-2 focus:ring-pink-500"></textarea>
+          </div>
+
+          <!-- Payment Method -->
+          <div class="bg-white rounded-2xl shadow-lg p-8">
+            <h2 class="text-2xl font-bold mb-6">Payment Method</h2>
+            <div class="space-y-4">
+              <label class="payment-option flex items-center gap-5 p-6 border-2 rounded-2xl cursor-pointer transition hover:shadow-md">
+                <input type="radio" name="payment" value="cod" class="w-6 h-6 text-pink-600" checked>
+                <div class="flex-1">
+                  <p class="font-bold text-lg">Cash on Delivery (COD)</p>
+                  <p class="text-gray-600">Pay when you receive your order</p>
+                </div>
+                <i class="fas fa-money-bill-wave text-4xl text-green-600"></i>
+              </label>
+
+              <!-- <label class="payment-option flex items-center gap-5 p-6 border-2 rounded-2xl cursor-pointer transition">
+                <input type="radio" name="payment" value="jazzcash" class="w-6 h-6 text-pink-600">
+                <div>JazzCash</div>
+              </label>
+
+              <label class="payment-option flex items-center gap-5 p-6 border-2 rounded-2xl cursor-pointer transition">
+                <input type="radio" name="payment" value="easypaisa" class="w-6 h-6 text-pink-600">
+                <div>Easypaisa</div>
+              </label>
+
+              <label class="payment-option flex items-center gap-5 p-6 border-2 rounded-2xl cursor-pointer transition">
+                <input type="radio" name="payment" value="card" class="w-6 h-6 text-pink-600">
+                <div>Credit / Debit Card</div>
+              </label> -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Side: Order Summary -->
+        <div class="lg:col-span-1">
+          <div class="bg-white rounded-2xl shadow-lg p-8 sticky top-24">
+            <h2 class="text-2xl font-bold mb-6">Order Summary</h2>
+            <div id="cart-summary-items" class="space-y-5 mb-6 max-h-96 overflow-y-auto"></div>
+
+            <div class="border-t pt-6 space-y-4 text-lg">
+              <div class="flex justify-between">
+                <span>Subtotal</span>
+                <span id="subtotal" class="font-bold">PKR 0</span>
+              </div>
+              <div class="flex justify-between text-green-600 font-bold">
+                <span>Delivery Charges</span>
+                <span>FREE</span>
+              </div>
+              <div class="flex justify-between text-2xl font-bold text-pink-600 pt-6 border-t">
+                <span>Grand Total</span>
+                <span id="grand-total">PKR 0</span>
+              </div>
+            </div>
+
+           <a
+  id="place-order"
+  href="./order_edit.html"
+  class="w-full mt-8 bg-pink-600 text-white py-6 rounded-2xl text-xl font-bold
+         hover:bg-blue-900 hover:text-black transition  disabled-btn
+         flex items-center justify-center"
+>
+  place-order
+</a>
+
+            <p class="text-center text-sm text-gray-500 mt-6">
+              Estimated Delivery: <strong>3-5 Business Days</strong>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Success Modal -->
+  <div id="success-modal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-3xl p-12 text-center max-w-lg mx-4 shadow-2xl">
+      <i class="fas fa-check-circle text-9xl text-green-500 mb-6"></i>
+      <h2 class="text-4xl font-bold mb-4">Order Placed Successfully!</h2>
+      <p class="text-xl text-gray-700 mb-6">
+        Thank you for shopping with <strong>Ahyera Store</strong>
+      </p>
+      <div class="bg-yellow-100 text-yellow-800 p-6 rounded-xl mb-8 text-lg">
+        You can cancel your order within <strong>24 hours</strong> from My Orders section.
+      </div>
+      <a href="index.html" class="bg-pink-600 text-white px-10 py-5 rounded-xl font-bold text-xl hover:bg-pink-700 inline-block">
+        Continue Shopping
+      </a>
+    </div>
+  </div>
+
+</body>
+</html>

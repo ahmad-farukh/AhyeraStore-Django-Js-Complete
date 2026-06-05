@@ -1,0 +1,189 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Crimson Bridal Lehenga - Ahyera Store</title>
+  <script defer src="./product_detail.js"></script>
+ <!-- Is purani line ko hata dein: <script src="https://cdn.tailwindcss.com"></script> -->
+
+<!-- Aur is naye stable CSS CDN link ko lagayein -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    .font-heading { font-family: 'Playfair Display', serif; }
+    .font-body { font-family: 'Inter', sans-serif; }
+    /* Zoom effect framework settings */
+    .zoom-img { transition: transform 0.4s ease-out; cursor: zoom-in; transform-origin: center center; }
+    .size-active { background: #e11d48 !important; color: white !important; border-color: #e11d48 !important; }
+    .heart-active { color: #e11d48 !important; }
+    .stock-low { color: #e11d48; font-weight: 700; }
+    .stock-good { color: #16a34a; font-weight: 700; }
+  </style>
+</head>
+<body class="bg-gray-50 font-body">
+
+  <header class="bg-white shadow-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-5 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <div class="w-12 h-12 bg-gradient-to-r from-blue-600 to-blue-800 rounded-full flex items-center justify-center text-white font-bold text-xl">AS</div>
+        <h1 class="text-3xl font-heading font-bold text-blue-700">Ahyera Store</h1>
+      </div>
+      <div class="flex items-center gap-6">
+        <button id="wishlist-btn" class="relative">
+          <i class="far fa-heart text-2xl hover:text-pink-600 transition"></i>
+          <span id="wishlist-count" class="absolute -top-2 -right-3 bg-pink-600 text-white text-xs w-6 h-6 rounded-full flex items-center justify-center hidden">0</span>
+        </button>
+        <a href="./cart.html" id="cart-btn" class="relative inline-block">
+          <i class="fas fa-shopping-bag text-2xl hover:text-pink-600 transition"></i>
+          <span id="cart-count" class="absolute -top-2 -right-3 bg-pink-600 text-white text-xs w-6 h-6 rounded-full flex items-center justify-center">0</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <div class="bg-white border-b">
+    <div class="max-w-7xl mx-auto px-4 py-3 text-sm text-gray-600">
+      Home → Bridal → <span class="text-pink-600 font-bold">Crimson Bridal Lehenga</span>
+    </div>
+  </div>
+
+  <section class="py-10">
+    <div class="max-w-7xl mx-auto px-4 lg:px-4">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
+
+        <div class="w-[200px] mx-auto lg:mx-0">
+          <div class="relative rounded-2xl overflow-hidden shadow-xl bg-white w-[200px] h-[200px] border border-gray-100">
+            <img id="main-img" src="../images/bracelet.jpg" alt="Lehenga" 
+                 class="w-full h-full object-cover zoom-img block"
+                 onmousemove="zoomImage(event)" onmouseleave="resetZoom()">
+            <div class="absolute bottom-2 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-full text-[10px] font-medium shadow-sm pointer-events-none whitespace-nowrap">
+              <i class="fas fa-search-plus text-pink-600 mr-0.5"></i> Hover to Zoom
+            </div>
+          </div>
+          
+          <div class="grid grid-cols-4 gap-2 mt-3">
+            <img src="../images/bracelet.jpg" class="w-full h-10 object-cover rounded-md cursor-pointer border-2 border-pink-600" onclick="changeImg(this)">
+            <img src="../images/pic1.jpg" class="w-full h-10 object-cover rounded-md cursor-pointer border hover:border-pink-600 transition" onclick="changeImg(this)">
+            <img src="../images/bracelet.jpg" class="w-full h-10 object-cover rounded-md cursor-pointer border hover:border-pink-600 transition" onclick="changeImg(this)">
+            <img src="../images/bracelet.jpg" class="w-full h-10 object-cover rounded-md cursor-pointer border hover:border-pink-600 transition" onclick="changeImg(this)">
+          </div>
+        </div>
+
+        <div class="space-y-8">
+          <div>
+            <h1 class="text-4xl lg:text-5xl font-heading font-bold text-gray-900">Crimson Bridal Lehenga</h1>
+            <p class="text-xl text-gray-600 mt-2">Pure Zari • Hand-Embroidered • Limited Edition</p>
+          </div>
+
+          <div class="flex items-center gap-4">
+            <div class="flex text-yellow-500 text-xl">★★★★★</div>
+            <span class="text-gray-600">(127 reviews)</span>
+          </div>
+
+          <div class="py-6 border-y">
+            <p class="text-5xl font-bold text-pink-600">PKR 248,000</p>
+            <div class="flex items-center gap-4 mt-2">
+              <del class="text-2xl text-gray-500">PKR 320,000</del>
+              <span class="bg-pink-100 text-pink-700 px-4 py-1 rounded-full font-bold">23% OFF</span>
+            </div>
+          </div>
+
+          <div id="stock-status" class="stock-low text-lg font-bold">
+            Only 3 pieces left!
+          </div>
+
+          <div>
+            <p class="text-lg font-semibold mb-4">Select Size</p>
+            <div class="flex gap-4 flex-wrap">
+              <button class="size-btn px-8 py-4 border-2 rounded-xl transition font-medium hover:border-pink-600" data-size="Small">Small</button>
+              <button class="size-btn px-8 py-4 border-2 rounded-xl transition font-medium hover:border-pink-600" data-size="Medium">Medium</button>
+              <button class="size-btn px-8 py-4 border-2 rounded-xl transition font-medium hover:border-pink-600" data-size="Large">Large</button>
+              <button class="size-btn px-8 py-4 border-2 rounded-xl transition font-medium hover:border-pink-600" data-size="Custom">Custom</button>
+            </div>
+            <p id="selected-size" class="mt-3 text-pink-600 font-bold">No size selected</p>
+          </div>
+
+          <div class="flex gap-4">
+            <button id="add-to-cart" class="flex-1 bg-pink-600 text-white py-5 rounded-2xl text-xl font-bold hover:bg-pink-700 transition shadow-lg">
+              Add to Cart
+            </button>
+            <button id="wishlist-heart" class="p-5 border-2 border-pink-600 text-pink-600 rounded-2xl hover:bg-pink-600 hover:text-white transition text-2xl flex items-center justify-center w-16 h-16">
+              <i class="far fa-heart"></i>
+            </button>
+          </div>
+
+          <div id="success-msg" class="hidden bg-green-100 text-green-700 p-4 rounded-xl text-center font-bold">
+            Added to cart!
+          </div>
+
+          <div class="bg-gray-100 p-6 rounded-xl space-y-3 text-sm">
+            <div class="flex items-center gap-4"><i class="fas fa-truck text-pink-600"></i> Free Delivery • 3-5 days</div>
+            <div class="flex items-center gap-4"><i class="fas fa-sync text-pink-600"></i> 7-Day Easy Returns</div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="mt-20">
+        <h2 class="text-4xl font-heading font-bold text-center mb-12">
+          <span class="text-pink-600">AI Recommends</span> Just For You
+        </h2>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div class="text-center">
+            <p class="text-lg font-bold text-pink-600 mb-4">Similar Products</p>
+            <div class="h-64 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition mb-3">
+              <img src="../images/bracelet.jpg" class="w-full h-full object-cover">
+            </div>
+            <p class="mt-3 font-semibold">Ivory Silk Saree</p>
+            <p class="text-xl font-bold text-blue-700">PKR 125,000</p>
+            <button class="mt-3 w-full bg-pink-600 text-white py-3 rounded-xl hover:bg-pink-700 transition text-sm font-medium">Add to Cart</button>
+          </div>
+
+          <div class="text-center">
+            <p class="text-lg font-bold text-pink-600 mb-4">Bought Together</p>
+            <div class="h-64 rounded-xl overflow-hidden shadow-lg mb-3">
+              <img src="../images/bracelet.jpg" class="w-full h-full object-cover">
+            </div>
+            <p class="mt-3 font-semibold">Gold Jewelry Set</p>
+            <p class="text-xl font-bold text-blue-700">PKR 45,000</p>
+            <button class="mt-3 w-full bg-pink-600 text-white py-3 rounded-xl hover:bg-pink-700 text-sm font-medium">Add to Cart</button>
+          </div>
+
+          <div class="text-center">
+            <p class="text-lg font-bold text-pink-600 mb-4">You May Also Like</p>
+            <div class="h-64 rounded-xl overflow-hidden shadow-lg mb-3">
+              <img src="../images/bracelet.jpg" class="w-full h-full object-cover">
+            </div>
+            <p class="mt-3 font-semibold">Black Velvet Suit</p>
+            <p class="text-xl font-bold text-blue-700">PKR 68,500</p>
+            <button class="mt-3 w-full bg-pink-600 text-white py-3 rounded-xl hover:bg-pink-700 text-sm font-medium">Add to Cart</button>
+          </div>
+
+          <div class="text-center">
+            <p class="text-lg font-bold text-pink-600 mb-4">Trending Now</p>
+            <div class="h-64 rounded-xl overflow-hidden shadow-lg mb-3">
+              <img src="../images/bracelet.jpg" class="w-full h-full object-cover">
+            </div>
+            <p class="mt-3 font-semibold">Maroon Anarkali</p>
+            <p class="text-xl font-bold text-blue-700">PKR 89,999</p>
+            <button class="mt-3 w-full bg-pink-600 text-white py-3 rounded-xl hover:bg-pink-700 text-sm font-medium">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <footer class="bg-gray-900 text-white py-12 mt-20">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+      <h1 class="text-4xl font-heading font-bold mb-3">Ahyera Store</h1>
+      <p class="text-gray-400">Pakistan's Most Loved Luxury Fashion Brand</p>
+    </div>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,204 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ahyera Store - Signup</title>
+  <link href="{% static 'css/output.css' %}" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+
+  <div class="w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden 
+              flex flex-col lg:flex-row h-auto lg:h-[680px]">
+
+    <!-- Left Side -->
+    <div class="bg-gradient-to-br from-blue-600 to-blue-800 text-white 
+                p-8 lg:p-12 flex flex-col justify-between flex-1">
+
+      <div>
+        <h1 class="text-3xl lg:text-4xl font-bold leading-tight">
+          Simplify<br>management With<br>Our dashboard.
+        </h1>
+
+        <p class="text-blue-100 text-sm lg:text-base mt-4 opacity-90">
+          Simplify your e-commerce mangement know the whole things is on your one click to buy lets go or signup today
+          and explore your style with us.
+        </p>
+      </div>
+
+      <div class="flex gap-4 mt-6 -ml-6">
+        <img src="{% static 'images/pic1.jpg' %}" class="w-28 lg:w-40 rounded-2xl shadow-2xl">
+        <img src="{% static 'images/pic2.jpg' %}" class="w-28 lg:w-40 rounded-2xl shadow-2xl -mt-10">
+      </div>
+    </div>
+
+    <!-- Right Side -->
+    <div class="p-8 lg:p-10 flex flex-col justify-center flex-1">
+
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white text-xl font-bold">
+          AS
+        </div>
+        <span class="text-xl font-bold text-gray-800">Ahyera Store</span>
+      </div>
+
+      <h2 class="text-3xl font-bold text-gray-900 mb-2">Create Account</h2>
+      <p class="text-gray-600 mb-5 text-sm">Join us today and get started</p>
+
+      {% if messages %}
+        <div class="space-y-2 mb-4">
+          {% for message in messages %}
+            <div class="px-4 py-3 rounded-xl text-sm border bg-gray-50 text-gray-800">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% if form and form.errors %}
+        <div class="space-y-2 mb-4">
+          {% for field, errors in form.errors.items %}
+            {% for error in errors %}
+              <div class="px-4 py-3 rounded-xl text-sm border bg-red-50 text-red-800">
+                {{ error }}
+              </div>
+            {% endfor %}
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <form method="post" class="space-y-4">
+        {% csrf_token %}
+
+        <!-- User Type Selection -->
+        <div class="flex gap-6 justify-center mb-2">
+          <label
+            class="flex items-center gap-2 cursor-pointer bg-gray-50 px-4 py-2 rounded-lg border hover:bg-gray-100 transition">
+            <input type="radio" name="user_type" value="customer" checked onchange="toggleSellerFields()"
+              class="w-4 h-4 text-blue-600">
+            <span class="font-medium text-gray-700">I am a Customer</span>
+          </label>
+          <label
+            class="flex items-center gap-2 cursor-pointer bg-gray-50 px-4 py-2 rounded-lg border hover:bg-gray-100 transition">
+            <input type="radio" name="user_type" value="seller" onchange="toggleSellerFields()"
+              class="w-4 h-4 text-blue-600">
+            <span class="font-medium text-gray-700">I am a Seller</span>
+          </label>
+        </div>
+
+        <!-- Seller Fields Container -->
+        <div id="seller-fields" class="space-y-4 hidden border-l-4 border-blue-600 pl-4 py-2 bg-blue-50 rounded-r-lg">
+          <h3 class="text-sm font-bold text-blue-800 uppercase tracking-wide">Business Details</h3>
+          <input type="text" name="business_name" placeholder="Business Name"
+            class="w-full px-4 py-3 rounded-xl border text-sm focus:ring-2 focus:ring-blue-600 focus:border-transparent">
+
+          <input type="text" name="address" placeholder="Business Address"
+            class="w-full px-4 py-3 rounded-xl border text-sm focus:ring-2 focus:ring-blue-600 focus:border-transparent">
+
+          <input type="text" name="city" placeholder="City"
+            class="w-full px-4 py-3 rounded-xl border text-sm focus:ring-2 focus:ring-blue-600 focus:border-transparent">
+        </div>
+
+        <!-- First + Last Name in Flex instead of Grid -->
+        <div class="flex flex-col sm:flex-row gap-3">
+          <input type="text" name="first_name" placeholder="First Name" required
+            class="flex-1 px-4 py-3 rounded-xl border text-sm">
+
+          <input type="text" name="last_name" placeholder="Last Name" required
+            class="flex-1 px-4 py-3 rounded-xl border text-sm">
+        </div>
+
+        <input type="text" name="username" placeholder="Username" required
+          class="w-full px-4 py-3 rounded-xl border text-sm">
+
+        <input type="email" name="email" placeholder="Email address" required
+          class="w-full px-4 py-3 rounded-xl border text-sm">
+
+        <input type="tel" name="phone" placeholder="Phone (optional)"
+          class="w-full px-4 py-3 rounded-xl border text-sm">
+
+        <div class="relative">
+          <input type="password" name="password1" id="spass" placeholder="Password" required
+            class="w-full px-4 py-3 rounded-xl border pr-12 text-sm">
+
+          <button type="button" onclick="toggleS()" class="absolute right-3 top-3.5 text-gray-500">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="relative">
+          <input type="password" name="password2" id="cpass" placeholder="Confirm Password" required
+            class="w-full px-4 py-3 rounded-xl border pr-12 text-sm">
+
+          <button type="button" onclick="toggleC()" class="absolute right-3 top-3.5 text-gray-500">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+          </button>
+        </div>
+
+        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl">
+          Create Account
+        </button>
+      </form>
+
+      <p class="text-center mt-6 text-sm text-gray-600">
+        Already have an account?
+        <a href="{% url 'authentication:login' %}" class="text-blue-600 font-bold hover:underline">
+          Login
+        </a>
+      </p>
+
+    </div>
+
+  </div>
+
+  <script>
+    function toggleS() {
+      const x = document.getElementById('spass');
+      x.type = x.type === 'password' ? 'text' : 'password';
+    }
+
+    function toggleC() {
+      const x = document.getElementById('cpass');
+      x.type = x.type === 'password' ? 'text' : 'password';
+    }
+
+    function toggleSellerFields() {
+      const userType = document.querySelector('input[name="user_type"]:checked').value;
+      const sellerFields = document.getElementById('seller-fields');
+      const inputs = sellerFields.querySelectorAll('input');
+
+      if (userType === 'seller') {
+        sellerFields.classList.remove('hidden');
+        inputs.forEach(input => input.required = true);
+        // Also make phone required for sellers
+        document.querySelector('input[name="phone"]').required = true;
+      } else {
+        sellerFields.classList.add('hidden');
+        inputs.forEach(input => input.required = false);
+        document.querySelector('input[name="phone"]').required = false;
+      }
+    }
+  </script>
+
+</body>
+
+</html>

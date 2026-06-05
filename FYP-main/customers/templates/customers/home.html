@@ -1,0 +1,469 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Ahyera Store - Premium Fashion & Tech{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Custom Scrollbar for Carousel */
+    .hide-scroll::-webkit-scrollbar {
+        display: none;
+    }
+
+    .hide-scroll {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    /* Smooth Scroll */
+    html {
+        scroll-behavior: smooth;
+    }
+
+    /* Card Hover Effects */
+    .product-card {
+        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+    }
+
+    .product-card:hover {
+        transform: translateY(-12px);
+        box-shadow: 0 20px 40px -5px rgba(20, 94, 253, 0.15);
+    }
+
+    /* Gradient Text */
+    .text-gradient {
+        background: linear-gradient(to right, #2563eb, #db2777);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<div class="bg-white border-b border-gray-100">
+    <div class="max-w-7xl mx-auto px-4 py-3 text-sm text-gray-500">
+        <a href="/" class="hover:text-blue-600">Home</a>
+        <span class="mx-2">/</span>
+    </div>
+</div>
+
+<!-- Message Notifications & Quick Actions (Authenticated Users Only) -->
+{% if user.is_authenticated %}
+<div class="max-w-7xl mx-auto px-4 pt-6">
+    <!-- Unread Messages Notification Banner -->
+    {% if unread_messages_count > 0 %}
+    <a href="{% url 'customers:messages' %}"
+        class="block bg-gradient-to-r from-blue-50 to-purple-50 border-l-4 border-blue-500 rounded-lg shadow-sm px-6 py-4 mb-4 hover:shadow-md transition group">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center">
+                    <i class="fas fa-envelope text-white text-xl"></i>
+                </div>
+                <div>
+                    <p class="font-bold text-gray-900 text-lg">
+                        You have {{ unread_messages_count }} unread message{{ unread_messages_count|pluralize }}
+                    </p>
+                    <p class="text-sm text-gray-600">Sellers are waiting for your response</p>
+                </div>
+            </div>
+            <span class="bg-blue-600 text-white px-6 py-2 rounded-full font-bold group-hover:bg-blue-700 transition">
+                View Messages <i class="fas fa-arrow-right ml-2"></i>
+            </span>
+        </div>
+    </a>
+    {% endif %}
+
+    <!-- My Messages Quick Link -->
+    <a href="{% url 'customers:messages' %}"
+        class="inline-flex items-center gap-3 bg-white border border-gray-200 rounded-xl shadow-sm px-6 py-3 hover:shadow-md hover:border-blue-500 transition font-bold text-gray-800">
+        <div
+            class="w-10 h-10 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center relative">
+            <i class="fas fa-comments text-white"></i>
+            {% if unread_messages_count > 0 %}
+            <span
+                class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
+                {{ unread_messages_count }}
+            </span>
+            {% endif %}
+        </div>
+        <span>My Messages</span>
+    </a>
+</div>
+{% endif %}
+
+{% if recommended_products %}
+<section class="py-12 bg-white border-b border-gray-100">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="flex items-center justify-between mb-8">
+            <div>
+                <h2 class="text-2xl font-bold text-gray-900">{{ recommendation_label }}</h2>
+                <p class="text-sm text-gray-500 mt-1">
+                    {% if user.is_authenticated %}
+                        Based on your order history and wishlist
+                    {% else %}
+                        Popular picks for you
+                    {% endif %}
+                </p>
+            </div>
+            <a href="{% url 'products:list' %}"
+                class="text-sm text-pink-600 font-semibold hover:underline">
+                View All
+            </a>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            {% for product in recommended_products %}
+            <div class="bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition group overflow-hidden">
+                <div class="aspect-square relative overflow-hidden bg-gray-50">
+                    <a href="{% url 'products:detail' product.slug %}">
+                        {% if product.main_image %}
+                        <img src="{{ product.main_image.url }}" alt="{{ product.name }}"
+                            class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                        {% else %}
+                        <div class="w-full h-full flex items-center justify-center text-gray-300">
+                            <i class="fas fa-image text-2xl"></i>
+                        </div>
+                        {% endif %}
+                    </a>
+                </div>
+                <div class="p-3">
+                    <p class="text-xs text-gray-400 mb-1">{{ product.category.name }}</p>
+                    <h3 class="font-semibold text-gray-900 text-xs line-clamp-2 mb-2 group-hover:text-pink-600 transition">
+                        <a href="{% url 'products:detail' product.slug %}">{{ product.name }}</a>
+                    </h3>
+                    {% if product.discount_percentage > 0 %}
+                    <p class="font-bold text-pink-600 text-sm">PKR {{ product.get_discount_price|floatformat:0 }}</p>
+                    {% else %}
+                    <p class="font-bold text-gray-900 text-sm">PKR {{ product.price|floatformat:0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- AI Recommendations Section -->
+{% if ai_products %}
+<section class="bg-gradient-to-r from-pink-50 via-purple-50 to-blue-50 py-16 relative overflow-hidden mt-8">
+    <!-- Decorative blobs -->
+    <div
+        class="absolute top-0 left-0 w-64 h-64 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob">
+    </div>
+    <div
+        class="absolute top-0 right-0 w-64 h-64 bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000">
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 relative z-10">
+        <div class="flex items-center justify-between mb-8">
+            <h2 class="text-3xl md:text-4xl font-heading font-bold text-gradient">AI-Powered Recommendations</h2>
+            <div class="flex gap-2">
+                <button id="prev-slide"
+                    class="w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center text-gray-600 hover:bg-blue-600 hover:text-white transition">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button id="next-slide"
+                    class="w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center text-gray-600 hover:bg-blue-600 hover:text-white transition">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Carousel -->
+        <div id="ai-carousel" class="flex gap-6 overflow-x-auto hide-scroll snap-x snap-mandatory pb-12">
+            {% for product in ai_products %}
+            <div class="min-w-[280px] md:min-w-[320px] snap-start">
+                <div
+                    class="bg-white rounded-2xl shadow-lg overflow-hidden product-card h-full flex flex-col relative group">
+
+                    <!-- Wishlist Button -->
+                    <form method="post" action="{% url 'customers:wishlist_add' product.id %}"
+                        class="absolute top-3 right-3 z-20 opacity-0 group-hover:opacity-100 transition duration-300">
+                        {% csrf_token %}
+                        <button type="submit"
+                            class="w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center text-gray-400 hover:text-pink-600 hover:scale-110 transition">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                    </form>
+
+                    <!-- Image -->
+                    <div class="relative aspect-square overflow-hidden">
+                        {% if product.main_image %}
+                        <img src="{{ product.main_image.url }}" alt="{{ product.name }}"
+                            class="w-full h-full object-cover transition duration-700 group-hover:scale-110">
+                        {% else %}
+                        <div class="w-full h-full bg-gray-100 flex items-center justify-center text-gray-300">
+                            <i class="fas fa-image text-4xl"></i>
+                        </div>
+                        {% endif %}
+
+                        <!-- Overlay -->
+                        <div
+                            class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
+                            <a href="{% url 'products:detail' product.slug %}"
+                                class="bg-white text-gray-900 px-6 py-2 rounded-full font-bold text-sm hover:bg-blue-600 hover:text-white transition transform translate-y-4 group-hover:translate-y-0 duration-300 shadow-lg">
+                                Quick View
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Content -->
+                    <div class="p-5 flex-1 flex flex-col">
+                        <p class="text-xs text-gray-500 mb-1 uppercase tracking-wider">{{ product.category.name }}</p>
+                        <h3
+                            class="font-bold text-gray-900 text-lg mb-2 line-clamp-1 group-hover:text-blue-600 transition">
+                            {{ product.name }}
+                        </h3>
+
+                        <div class="mt-auto flex items-center justify-between">
+                            <div class="flex flex-col">
+                                {% if product.discount_percentage > 0 %}
+                                <span class="text-xs text-gray-400 line-through">PKR {{ product.price|floatformat:0
+                                    }}</span>
+                                <span class="text-lg font-bold text-pink-600">PKR {{
+                                    product.get_discount_price|floatformat:0 }}</span>
+                                {% else %}
+                                <span class="text-lg font-bold text-gray-900">PKR {{ product.price|floatformat:0
+                                    }}</span>
+                                {% endif %}
+                            </div>
+
+                            <form method="post" action="{% url 'customers:cart_add' product.id %}">
+                                {% csrf_token %}
+                                <button type="submit"
+                                    class="w-10 h-10 rounded-full bg-gradient-to-r from-blue-600 to-pink-600 text-white flex items-center justify-center shadow-md hover:shadow-lg hover:scale-110 transition">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Main Content -->
+<section class="py-12 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- Sidebar (Desktop) -->
+            <aside class="hidden lg:block w-64 shrink-0 space-y-8 sticky top-24 h-fit">
+                <!-- Filters Header -->
+                <!-- <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-heading font-bold">Filters</h3>
+                    <a href="{% url 'products:list' %}" class="text-sm text-pink-600 font-medium hover:underline">Clear
+                        All</a>
+                </div> -->
+
+                <!-- Categories -->
+                <!-- <div>
+                    <h4 class="font-bold text-gray-900 mb-4">Categories</h4>
+                    <div class="space-y-3">
+                        {% for category in categories %}
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <div class="relative flex items-center">
+                                <input type="checkbox" name="category" value="{{ category.slug }}"
+                                    class="peer appearance-none w-5 h-5 border-2 border-gray-300 rounded checked:bg-blue-600 checked:border-blue-600 transition"
+                                    {% if category.slug in selected_categories %}checked{% endif %}>
+                                <i
+                                    class="fas fa-check text-white text-xs absolute left-1 opacity-0 peer-checked:opacity-100 pointer-events-none"></i>
+                            </div>
+                            <span class="text-gray-600 group-hover:text-blue-600 transition">{{ category.name }}</span>
+                            <span
+                                class="bg-gray-100 text-gray-400 text-xs px-2 py-1 rounded-full group-hover:bg-pink-100 group-hover:text-pink-600 transition">
+                                {{ category.items_count|default:"0" }}
+                            </span>
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div> -->
+            </aside>
+
+            <!-- Main Grid -->
+            <div class="flex-1">
+                <!-- Toolbar -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+                    <h2 class="text-2xl font-heading font-bold">All Products</h2>
+                    <a href="{% url 'customers:ai_search' %}"
+                        class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-pink-600 text-white px-5 py-2 rounded-full font-bold text-sm hover:shadow-lg transition">
+                        <i class="fas fa-camera"></i> Visual Search
+                    </a>
+
+                    <div class="flex items-center gap-4">
+                        <button class="lg:hidden text-gray-600 hover:text-blue-600 font-medium">
+                            <i class="fas fa-filter mr-2"></i> Filters
+                        </button>
+
+                        <!-- <div class="relative group">
+                            <button class="flex items-center gap-2 text-sm font-medium text-gray-700 bg-white px-4 py-2 rounded-full border border-gray-200 hover:border-blue-500 transition">
+                                Sort by: Relevance <i class="fas fa-chevron-down text-xs"></i>
+                            </button>
+                        </div> -->
+                    </div>
+                </div>
+
+                <!-- Active Filters - Dynamic (Only shows when filters are active) -->
+                {% if selected_categories or request.GET.price_range or request.GET.q %}
+                <div class="flex flex-wrap gap-2 mb-8">
+                    <!-- Category Filters -->
+                    {% for category_slug in selected_categories %}
+                    {% for category in categories %}
+                    {% if category.slug == category_slug %}
+                    <span
+                        class="bg-white border border-gray-200 text-gray-600 text-sm px-3 py-1 rounded-full flex items-center gap-2">
+                        {{ category.name }}
+                        <a href="?{% for k, v in request.GET.items %}{% if k != 'category' or v != category_slug %}{% if k != 'category' %}{{ k }}={{ v }}&{% endif %}{% endif %}{% endfor %}"
+                            class="hover:text-red-500 cursor-pointer">
+                            <i class="fas fa-times"></i>
+                        </a>
+                    </span>
+                    {% endif %}
+                    {% endfor %}
+                    {% endfor %}
+
+                    <!-- Price Range Filter -->
+                    {% if request.GET.price_range %}
+                    <span
+                        class="bg-white border border-gray-200 text-gray-600 text-sm px-3 py-1 rounded-full flex items-center gap-2">
+                        {% if request.GET.price_range == '0-50000' %}Under PKR 50,000
+                        {% elif request.GET.price_range == '50000-100000' %}PKR 50k - 100k
+                        {% elif request.GET.price_range == '100000-200000' %}PKR 100k - 200k
+                        {% elif request.GET.price_range == '200000-plus' %}Above PKR 200k
+                        {% endif %}
+                        <a href="?{% for k, v in request.GET.items %}{% if k != 'price_range' %}{{ k }}={{ v }}&{% endif %}{% endfor %}"
+                            class="hover:text-red-500 cursor-pointer">
+                            <i class="fas fa-times"></i>
+                        </a>
+                    </span>
+                    {% endif %}
+
+                    <!-- Search Query Filter -->
+                    {% if request.GET.q %}
+                    <span
+                        class="bg-white border border-gray-200 text-gray-600 text-sm px-3 py-1 rounded-full flex items-center gap-2">
+                        Search: "{{ request.GET.q }}"
+                        <a href="?{% for k, v in request.GET.items %}{% if k != 'q' %}{{ k }}={{ v }}&{% endif %}{% endfor %}"
+                            class="hover:text-red-500 cursor-pointer">
+                            <i class="fas fa-times"></i>
+                        </a>
+                    </span>
+                    {% endif %}
+
+                    <!-- Clear All Button -->
+                    <a href="{% url 'products:list' %}"
+                        class="bg-red-50 border border-red-200 text-red-600 text-sm px-3 py-1 rounded-full flex items-center gap-2 hover:bg-red-100 transition font-medium">
+                        <i class="fas fa-redo text-xs"></i>
+                        Clear All
+                    </a>
+                </div>
+                {% endif %}
+
+                <!-- Products Grid -->
+                <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {% for product in products %}
+                    <div
+                        class="bg-white rounded-2xl shadow-sm hover:shadow-xl transition duration-300 product-card group relative overflow-hidden">
+                        <!-- Wishlist -->
+                        <form method="post" action="{% url 'customers:wishlist_add' product.id %}"
+                            class="absolute top-3 right-3 z-10">
+                            {% csrf_token %}
+                            <button type="submit"
+                                class="w-8 h-8 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-400 hover:text-pink-600 hover:bg-white transition shadow-sm">
+                                <i class="far fa-heart"></i>
+                            </button>
+                        </form>
+
+                        <!-- Image -->
+                        <div class="aspect-square relative overflow-hidden bg-gray-100">
+                            <a href="{% url 'products:detail' product.slug %}">
+                                {% if product.main_image %}
+                                <img src="{{ product.main_image.url }}" alt="{{ product.name }}"
+                                    class="w-full h-full object-cover transition duration-700 group-hover:scale-110">
+                                {% else %}
+                                <div class="w-full h-full flex items-center justify-center text-gray-300">
+                                    <i class="fas fa-image text-3xl"></i>
+                                </div>
+                                {% endif %}
+                            </a>
+
+                            <!-- Quick View Overlay -->
+                            <div
+                                class="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 transition duration-300 flex justify-center">
+                                <a href="{% url 'products:detail' product.slug %}"
+                                    class="bg-white/90 backdrop-blur text-gray-900 px-6 py-2 rounded-full text-sm font-bold shadow-lg hover:bg-blue-600 hover:text-white transition w-full text-center">
+                                    View Details
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Content -->
+                        <div class="p-4">
+                            <p class="text-xs text-gray-500 mb-1">{{ product.category.name }}</p>
+                            <h3
+                                class="font-bold text-gray-900 text-sm mb-2 line-clamp-2 h-10 group-hover:text-blue-600 transition">
+                                <a href="{% url 'products:detail' product.slug %}">{{ product.name }}</a>
+                            </h3>
+
+                            <div class="flex items-center justify-between mt-3">
+                                <div class="flex flex-col">
+                                    {% if product.discount_percentage > 0 %}
+                                    <span class="text-xs text-gray-400 line-through">PKR {{ product.price|floatformat:0
+                                        }}</span>
+                                    <span class="font-bold text-pink-600">PKR {{
+                                        product.get_discount_price|floatformat:0 }}</span>
+                                    {% else %}
+                                    <span class="font-bold text-gray-900">PKR {{ product.price|floatformat:0 }}</span>
+                                    {% endif %}
+                                </div>
+
+                                <form method="post" action="{% url 'customers:cart_add' product.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit"
+                                        class="w-8 h-8 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center hover:bg-gradient-to-r hover:from-blue-600 hover:to-pink-600 hover:text-white transition shadow-sm">
+                                        <i class="fas fa-plus text-xs"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="col-span-full text-center py-20">
+                        <i class="fas fa-box-open text-6xl text-gray-300 mb-4"></i>
+                        <p class="text-xl text-gray-500">No products found matching your criteria.</p>
+                        <a href="{% url 'products:list' %}" class="mt-4 text-blue-600 font-medium hover:underline">Clear
+                            Filters</a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Carousel Navigation
+        const carousel = document.getElementById('ai-carousel');
+        const prevBtn = document.getElementById('prev-slide');
+        const nextBtn = document.getElementById('next-slide');
+
+        if (carousel && prevBtn && nextBtn) {
+            nextBtn.addEventListener('click', () => {
+                carousel.scrollBy({ left: 320, behavior: 'smooth' });
+            });
+
+            prevBtn.addEventListener('click', () => {
+                carousel.scrollBy({ left: -320, behavior: 'smooth' });
+            });
+        }
+    });
+</script>
+{% endblock %}

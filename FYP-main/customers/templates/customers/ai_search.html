@@ -1,0 +1,234 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}AI Search - Ahyera Store{% endblock %}
+
+{% block extra_css %}
+<style>
+    .font-heading {
+        font-family: 'Playfair Display', serif;
+    }
+
+    .search-suggestion {
+        transition: all 0.2s;
+    }
+
+    .search-suggestion:hover {
+        background: #fef2f2;
+        transform: translateX(8px);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section with AI Search -->
+<section class="py-20 bg-gradient-to-b from-pink-50 to-white">
+    <div class="max-w-5xl mx-auto px-4 text-center">
+        <h2 class="text-5xl md:text-6xl font-heading font-bold text-gray-900 mb-6">
+            Find Your Dream Outfit with <span class="text-pink-600">AI</span>
+        </h2>
+        <p class="text-xl text-gray-600 mb-10">Type, speak or upload an image — we'll find the perfect match instantly
+        </p>
+
+        <!-- AI Search Bar -->
+        <div class="relative max-w-3xl mx-auto">
+            <div id="search-container"
+                class="bg-white rounded-3xl shadow-2xl p-6 border-2 border-dashed border-pink-200 hover:border-pink-400 transition">
+
+                <!-- Text Search -->
+                <form method="get" action="{% url 'products:list' %}" class="relative mb-6">
+                    <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-pink-500 text-xl"></i>
+                    <input type="text" name="q" id="text-search" value="{{ query|default:'' }}"
+                        placeholder="Search by name, style, occasion... e.g. red bridal lehenga, anarkali for wedding"
+                        class="w-full pl-14 pr-12 py-5 text-lg rounded-2xl border focus:outline-none focus:ring-4 focus:ring-pink-200 transition"
+                        autocomplete="off" />
+                    <button type="submit"
+                        class="absolute right-4 top-1/2 -translate-y-1/2 bg-pink-600 text-white p-3 rounded-xl hover:bg-pink-700">
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </form>
+
+                <!-- Predictive Suggestions -->
+                <div id="suggestions" class="hidden bg-white border rounded-2xl shadow-lg max-h-96 overflow-y-auto">
+                    <div class="p-4 border-b">
+                        <p class="text-sm font-medium text-pink-600 flex items-center gap-2">
+                            <i class="fas fa-brain"></i> AI Suggestions
+                        </p>
+                    </div>
+                    <div id="suggestion-list" class="py-2"></div>
+                </div>
+
+                <!-- Divider -->
+                <div class="text-center text-gray-400 my-6">OR</div>
+
+                <!-- Image Upload Area -->
+                <form method="post" action="{% url 'customers:ai_image_search' %}" enctype="multipart/form-data"
+                    id="image-search-form">
+                    {% csrf_token %}
+                    <div id="drop-zone"
+                        class="border-2 border-dashed border-gray-300 rounded-2xl p-12 text-center cursor-pointer hover:border-pink-500 hover:bg-pink-50 transition"
+                        onclick="document.getElementById('image-upload').click()">
+                        <i class="fas fa-cloud-upload-alt text-6xl text-gray-400 mb-4"></i>
+                        <p class="text-xl font-medium text-gray-700">Drag & drop an image here</p>
+                        <p class="text-gray-500 mt-2">or <span class="text-pink-600 font-semibold">click to
+                                upload</span></p>
+                        <input type="file" name="search_image" id="image-upload" accept="image/*" class="hidden"
+                            onchange="previewAndSubmit(event)" />
+
+                        <div id="uploaded-preview" class="mt-6 hidden">
+                            <img id="preview-img" class="mx-auto max-h-64 rounded-xl shadow-lg" />
+                            <p class="mt-4 text-green-600 font-medium">Searching for similar products...</p>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Popular Searches -->
+            <div class="mt-8">
+                <p class="text-sm text-gray-600 mb-3">Popular Searches:</p>
+                <div class="flex flex-wrap gap-3 justify-center">
+                    <a href="{% url 'products:list' %}?q=bridal+lehenga"
+                        class="px-5 py-2 bg-pink-100 text-pink-700 rounded-full hover:bg-pink-200 transition">
+                        Bridal Lehenga
+                    </a>
+                    <a href="{% url 'products:list' %}?q=anarkali"
+                        class="px-5 py-2 bg-pink-100 text-pink-700 rounded-full hover:bg-pink-200 transition">
+                        Anarkali
+                    </a>
+                    <a href="{% url 'products:list' %}?q=saree"
+                        class="px-5 py-2 bg-pink-100 text-pink-700 rounded-full hover:bg-pink-200 transition">
+                        Saree
+                    </a>
+                    <a href="{% url 'products:list' %}?q=jewelry"
+                        class="px-5 py-2 bg-pink-100 text-pink-700 rounded-full hover:bg-pink-200 transition">
+                        Jewelry
+                    </a>
+                    <a href="{% url 'products:list' %}?q=wedding+dress"
+                        class="px-5 py-2 bg-pink-100 text-pink-700 rounded-full hover:bg-pink-200 transition">
+                        Wedding Dress
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Search Results -->
+{% if query or search_results or is_visual_search %}
+<section class="py-12 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="flex justify-between items-center mb-8">
+            <h3 class="text-3xl font-bold text-gray-800">
+                {% if query %}
+                Search Results for "{{ query }}"
+                {% elif is_visual_search %}
+                Visually Similar Products
+                {% if visual_description %}
+                <p class="text-base text-gray-500 font-normal mt-1">
+                    Gemini identified: <span class="text-pink-600 font-semibold">{{ visual_description }}</span>
+                </p>
+                {% endif %}
+                {% else %}
+                Similar Products
+                {% endif %}
+            </h3>
+            <p class="text-gray-600">{{ visual_result_count|default:search_results.count }} products found</p>
+        </div>
+
+        {% if search_results %}
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {% for product in search_results %}
+            <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition group">
+                <div class="aspect-square relative">
+                    <a href="{% url 'products:detail' product.slug %}">
+                        {% if product.main_image %}
+                        <img src="{{ product.main_image.url }}" alt="{{ product.name }}"
+                            class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
+                        {% else %}
+                        <div class="w-full h-full bg-gray-200 flex items-center justify-center">
+                            <i class="fas fa-image text-4xl text-gray-400"></i>
+                        </div>
+                        {% endif %}
+                    </a>
+
+                    {% if product.discount_percentage > 0 %}
+                    <span class="absolute top-2 left-2 bg-red-600 text-white px-2 py-1 rounded-full text-xs font-bold">
+                        -{{ product.discount_percentage }}%
+                    </span>
+                    {% endif %}
+
+                    <form method="post" action="{% url 'customers:wishlist_add' product.id %}"
+                        class="absolute top-2 right-2">
+                        {% csrf_token %}
+                        <button type="submit"
+                            class="w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-pink-600 hover:text-white transition">
+                            <i class="far fa-heart"></i>
+                        </button>
+                    </form>
+                </div>
+
+                <div class="p-4">
+                    <h3 class="font-bold text-gray-800 mb-2 line-clamp-2">{{ product.name }}</h3>
+                    <p class="text-sm text-gray-600 mb-2">{{ product.category.name }}</p>
+
+                    {% if product.discount_percentage > 0 %}
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="text-xl font-bold text-pink-600">PKR {{ product.get_discount_price|floatformat:0
+                            }}</span>
+                        <span class="text-sm text-gray-500 line-through">PKR {{ product.price|floatformat:0 }}</span>
+                    </div>
+                    {% else %}
+                    <p class="text-xl font-bold text-pink-600 mb-3">PKR {{ product.price|floatformat:0 }}</p>
+                    {% endif %}
+
+                    <form method="post" action="{% url 'customers:cart_add' product.id %}">
+                        {% csrf_token %}
+                        <button type="submit"
+                            class="w-full bg-gradient-to-r from-blue-600 to-pink-600 text-white py-2 rounded-lg font-bold hover:shadow-lg transition">
+                            Add to Cart
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-20">
+            <i class="fas fa-search text-8xl text-gray-300 mb-6"></i>
+            <p class="text-2xl text-gray-600 mb-4">No products found</p>
+            <p class="text-gray-500">Try different keywords or browse our categories</p>
+            <a href="{% url 'products:list' %}"
+                class="inline-block mt-6 bg-gradient-to-r from-blue-600 to-pink-600 text-white px-8 py-4 rounded-xl font-bold hover:shadow-lg transition">
+                Browse All Products
+            </a>
+        </div>
+        {% endif %}
+
+        {% if show_google_fallback %}
+        <div class="mt-10 bg-yellow-50 border border-yellow-200 rounded-2xl p-6 text-center">
+            <p class="text-gray-700 font-semibold mb-1">
+                <i class="fas fa-search mr-2 text-yellow-500"></i>
+                Not enough matches found in our catalog.
+            </p>
+            {% if visual_description %}
+            <p class="text-gray-500 text-sm mb-4">
+                We searched for: <span class="font-medium text-gray-700">"{{ visual_description }}"</span>
+            </p>
+            {% endif %}
+            <a href="https://lens.google.com" target="_blank"
+                class="inline-block bg-gradient-to-r from-blue-600 to-pink-600 text-white px-8 py-3 rounded-xl font-bold hover:shadow-lg transition">
+                <i class="fab fa-google mr-2"></i> Search on Google Lens
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+{{ suggestions|json_script:"ai-suggestions-data" }}
+{{ visual_result_count|default:0|json_script:"ai-visual-result-count" }}
+<script src="{% static 'js/ai_search.js' %}"></script>
+{% endblock %}

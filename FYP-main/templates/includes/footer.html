@@ -1,0 +1,63 @@
+{% load static %}
+
+<footer class="bg-gray-600 text-white  lg:py-9 pt-5 >
+  <div class="max-w-7xl mx-auto px-4 lg:px-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+      <div class="text-center lg:text-left">
+        <div class="flex items-center justify-center lg:justify-start gap-3 mb-4">
+          <div
+            class="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-xl font-bold">
+            AS
+          </div>
+          <span class="text-xl font-bold">Ahyera Store</span>
+        </div>
+        <p class="text-white mb-4">Your trusted AI-powered shopping partner in Pakistan</p>
+        <div
+          class="flex items-center justify-center lg:justify-start gap-2 text-sm bg-green-500 bg-opacity-20 px-3 py-1 rounded-full inline-block">
+          <i class="fas fa-robot"></i>
+          <span>AI Powered</span>
+        </div>
+      </div>
+
+      <div class="text-center lg:text-left">
+        <h3 class="font-semibold mb-4">Quick Links</h3>
+        <ul class="space-y-2 text-white">
+          <li><a href="{% url 'customers:home' %}" class="hover:text-white transition">About Us</a></li>
+          <li><a href="{% url 'products:list' %}" class="hover:text-white transition">Categories</a></li>
+          <li><a href="{% url 'products:list' %}" class="hover:text-white transition">Deals & Offers</a></li>
+          <li><a href="{% url 'customers:ai_search' %}" class="hover:text-white transition">AI Features</a></li>
+        </ul>
+      </div>
+
+      <div class="text-center lg:text-left">
+        <h3 class="font-semibold mb-4">Customer Service</h3>
+        <ul class="space-y-2 text-white">
+          <li><a href="mailto:support@ahyerastore.com" class="hover:text-white transition">Contact Us</a></li>
+          <li><a href="{% url 'customers:home' %}" class="hover:text-white transition">Shipping Info</a></li>
+          <li><a href="{% url 'customers:home' %}" class="hover:text-white transition">Return Policy</a></li>
+          <li><a href="{% url 'customers:home' %}" class="hover:text-white transition">FAQ</a></li>
+        </ul>
+      </div>
+
+      <div class="text-center lg:text-left">
+        <h3 class="font-semibold mb-4">Connect With Us</h3>
+        <div class="flex justify-center lg:justify-start gap-4 text-xl mb-4">
+         
+          <a href="" class="hover:text-pink-400 transition"><i
+              class="fab fa-instagram"></i></a>
+          <a href="{% url 'customers:home' %}" class="hover:text-green-400 transition"><i
+              class="fab fa-whatsapp"></i></a>
+          <a href="{% url 'customers:home' %}" class="hover:text-blue-300 transition"><i class="fab fa-twitter"></i></a>
+        </div>
+        <div class="flex items-center justify-center lg:justify-start gap-2 text-sm">
+          <i class="fas fa-headset"></i>
+          <span>24/7 AI Support Available</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="border-t border-1 text-center flex justify-center items-center p-6">
+      <p class="text-white text-sm">&copy; 2025 Ahyera Store. All rights reserved. Made with ❤️ in Pakistan</p>
+    </div>
+  </div>
+</footer>

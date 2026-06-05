@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Profile • Ahyera Store</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    .font-logo { font-family: 'Playfair Display', serif; }
+    .font-body { font-family: 'Inter', sans-serif; }
+  </style>
+</head>
+<body class="bg-gray-50 font-body min-h-screen">
+
+  <!-- Navbar -->
+  <nav class="bg-white shadow-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
+      <div class="flex items-center gap-4">
+        <div class="w-12 h-12 bg-gradient-to-r from-blue-600 to-pink-600 rounded-full flex items-center justify-center text-white font-bold text-xl">AS</div>
+        <h1 class="text-3xl font-logo text-gray-800">Ahyera Store</h1>
+      </div>
+      <div class="flex items-center gap-8 text-gray-700">
+        <a href="customer_home.html" class="hover:text-pink-600 font-medium">Home</a>
+        <a href="wishlist.html" class="hover:text-pink-600 font-medium">Wishlist</a>
+        <a href="#" class="font-bold text-pink-600">My Profile</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Profile Section -->
+  <div class="max-w-4xl mx-auto px-6 py-12">
+
+    <!-- Profile Card -->
+    <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
+      <div class="flex flex-col md:flex-row items-center gap-8">
+        <div class="relative">
+          <img id="profile-pic" src="https://via.placeholder.com/150/145efd/ffffff?text=AK" alt="Profile" class="w-36 h-36 rounded-full object-cover border-4 border-gray-200">
+          <label class="absolute bottom-2 right-2 bg-pink-600 text-white w-10 h-10 rounded-full flex items-center justify-center cursor-pointer hover:bg-pink-700 transition">
+            <i class="fas fa-camera text-sm"></i>
+            <input type="file" id="pic-upload" accept="image/*" class="hidden">
+          </label>
+        </div>
+        <div class="text-center md:text-left flex-1">
+          <h2 class="text-3xl font-bold text-gray-800" id="user-name">Ayesha Khan</h2>
+          <p class="text-gray-600 mt-1">ayesha.khan@gmail.com</p>
+          <p class="text-gray-500 mt-2">Member Since March 2024</p>
+        </div>
+        <button onclick="toggleEdit()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-3 rounded-xl font-medium transition">
+          <i class="fas fa-edit mr-2"></i> Edit Profile
+        </button>
+      </div>
+    </div>
+
+    <!-- Edit Form (Hidden by default) -->
+    <div id="edit-form" class="bg-white rounded-2xl shadow-lg p-8 mb-8 hidden">
+      <h3 class="text-2xl font-bold text-gray-800 mb-6">Edit Your Information</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label class="block text-gray-700 font-medium mb-2">Full Name</label>
+          <input type="text" id="edit-name" value="Ayesha Khan" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:border-pink-600">
+        </div>
+        <div>
+          <label class="block text-gray-700 font-medium mb-2">Phone Number</label>
+          <input type="text" value="+92 300 1234567" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:border-pink-600">
+        </div>
+        <div class="md:col-span-2">
+          <label class="block text-gray-700 font-medium mb-2">Delivery Address</label>
+          <textarea rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:border-pink-600">House #42, Street 8, Phase 6, DHA Karachi, Pakistan</textarea>
+        </div>
+      </div>
+      <div class="mt-6 flex gap-4">
+        <button onclick="saveProfile()" class="bg-gradient-to-r from-blue-600 to-pink-600 text-white px-8 py-3 rounded-xl font-bold hover:shadow-lg transition">
+          Save Changes
+        </button>
+        <button onclick="toggleEdit()" class="bg-gray-200 text-gray-700 px-8 py-3 rounded-xl font-medium hover:bg-gray-300 transition">
+          Cancel
+        </button>
+      </div>
+    </div>
+
+    <!-- Membership & Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+      <!-- Member Level -->
+      <div class="bg-white rounded-2xl shadow-lg p-8 text-center">
+        <div class="w-24 h-24 mx-auto bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center text-white text-4xl font-bold mb-4">
+          <i class="fas fa-crown"></i>
+        </div>
+        <h3 class="text-2xl font-bold text-gray-800">Gold Member</h3>
+        <p class="text-gray-600 mt-2">You're in the top 8% of shoppers!</p>
+        <div class="mt-4 bg-gray-200 rounded-full h-3 overflow-hidden">
+          <div class="bg-gradient-to-r from-blue-600 to-pink-600 h-full rounded-full" style="width: 82%"></div>
+        </div>
+        <p class="text-sm text-gray-500 mt-2">82% to Diamond Level</p>
+      </div>
+
+      <!-- Total Spent -->
+      <div class="bg-white rounded-2xl shadow-lg p-8 text-center">
+        <i class="fas fa-rupee-sign text-5xl text-pink-600 mb-4"></i>
+        <h3 class="text-2xl font-bold text-gray-800">PKR 4,850,000</h3>
+        <p class="text-gray-600">Total Spent</p>
+        <p class="text-sm text-gray-500 mt-3">38 Orders Completed</p>
+      </div>
+
+      <!-- Favorite Category -->
+      <div class="bg-white rounded-2xl shadow-lg p-8 text-center">
+        <i class="fas fa-heart text-5xl text-pink-600 mb-4"></i>
+        <h3 class="text-2xl font-bold text-gray-800">Bridal Collection</h3>
+        <p class="text-gray-600">Your Favorite Category</p>
+        <p class="text-sm text-gray-500 mt-3">22 items purchased</p>
+      </div>
+
+    </div>
+
+    <!-- Quick Links -->
+    <div class="mt-12 bg-white rounded-2xl shadow-lg p-8">
+      <h3 class="text-2xl font-bold text-gray-800 mb-6">Quick Access</h3>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+        <a href="./my_orders.html" class="hover:text-pink-600 transition">
+          <i class="fas fa-box text-3xl mb-2 block"></i>
+          <span class="font-medium">My Orders</span>
+        </a>
+        <a href="./whishlist.html" class="hover:text-pink-600 transition">
+          <i class="fas fa-heart text-3xl mb-2 block"></i>
+          <span class="font-medium">Wishlist</span>
+        </a>
+        <a href="./customer_addresses.html" class="hover:text-pink-600 transition">
+          <i class="fas fa-map-marker-alt text-3xl mb-2 block"></i>
+          <span class="font-medium">Addresses</span>
+        </a>
+        <a href="./customer_profile.html" class="hover:text-pink-600 transition">
+          <i class="fas fa-headset text-3xl mb-2 block"></i>
+          <span class="font-medium">Support</span>
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-white py-12 text-center mt-16">
+    <h1 class="text-4xl font-logo mb-4">Ahyera Store</h1>
+    <p>© 2025 • Pakistan's Premium Fashion & Tech Store</p>
+  </footer>
+
+  <script>
+    // Toggle Edit Form
+    function toggleEdit() {
+      document.getElementById('edit-form').classList.toggle('hidden');
+    }
+
+    // Save Profile
+    function saveProfile() {
+      const newName = document.getElementById('edit-name').value.trim();
+      if (newName) {
+        document.getElementById('user-name').textContent = newName;
+      }
+      toggleEdit();
+      alert("Profile updated successfully!");
+    }
+
+    // Profile Picture Change
+    document.getElementById('pic-upload').onchange = function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+          document.getElementById('profile-pic').src = ev.target.result;
+        }
+        reader.readAsDataURL(file);
+      }
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,338 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Seller Dashboard - {{ seller_profile.business_name|default:"Manage Products" }}</title>
+  <link href="{% static 'css/output.css' %}" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    .product-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    .badge-green {
+      background-color: #d1fae5;
+      color: #065f46;
+    }
+
+    .badge-red {
+      background-color: #fee2e2;
+      color: #991b1b;
+    }
+
+    .badge-orange {
+      background-color: #fed7aa;
+      color: #92400e;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+
+  <div class="container mx-auto px-4 py-8 max-w-7xl">
+
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-10">
+      <div>
+        <h1 class="text-4xl font-bold text-blue-900">My Products</h1>
+        <p class="text-gray-600 mt-1">{{ seller_profile.business_name }}</p>
+      </div>
+      <div class="flex gap-4">
+        <a href="{% url 'sellers:profile' %}"
+          class="bg-blue-900 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition flex items-center gap-2">
+          {% if seller_profile.business_logo %}
+          <img src="{{ seller_profile.business_logo.url }}" alt="{{ seller_profile.business_name }}"
+            class="w-5 h-5 rounded-full object-cover">
+          {% else %}
+          <i class="fas fa-user"></i>
+          {% endif %}
+          Profile
+        </a>
+      </div>
+    </div>
+
+    <!-- Filter and Sort Bar -->
+    <div class="bg-white rounded-xl shadow-sm p-4 mb-8">
+      <form method="get" class="flex flex-wrap gap-4 items-center justify-between">
+        <div class="flex flex-wrap gap-4 items-center">
+          <!-- Category Filter -->
+          <select name="category" onchange="this.form.submit()"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
+            <option value="">All Categories</option>
+            {% for category in categories %}
+            <option value="{{ category.slug }}" {% if current_category == category.slug %}selected{% endif %}>
+              {{ category.name }}
+            </option>
+            {% endfor %}
+          </select>
+          <a href="{% url 'sellers:dashboard' %}" class="text-sm text-gray-600 hover:text-blue-900">Clear Filters</a>
+        </div>
+      </form>
+    </div>
+
+    <!-- Bulk Actions Toolbar (Hidden by default) -->
+    <div id="bulk-actions"
+      class="hidden fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-white rounded-full shadow-2xl px-8 py-4 z-50 border border-gray-200 flex items-center gap-6">
+      <span class="text-gray-700 font-medium"><span id="selected-count">0</span> selected</span>
+      <div class="h-6 w-px bg-gray-300"></div>
+      <button onclick="submitBulkDelete()" class="text-red-600 hover:text-red-800 font-medium flex items-center gap-2">
+        <i class="fas fa-trash-alt"></i> Delete Selected
+      </button>
+      <button onclick="deselectAll()" class="text-gray-500 hover:text-gray-700">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <!-- Messages -->
+    {% if messages %}
+    {% for message in messages %}
+    <div
+      class="mb-4 p-4 rounded-lg {% if message.tags == 'success' %}bg-green-50 text-green-800 border border-green-200{% elif message.tags == 'error' %}bg-red-50 text-red-800 border border-red-200{% elif message.tags == 'warning' %}bg-yellow-50 text-yellow-800 border border-yellow-200{% else %}bg-blue-50 text-blue-800 border border-blue-200{% endif %}">
+      {{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+      <div class="bg-white rounded-xl shadow-lg p-6 text-center transform transition hover:scale-105">
+        <div class="flex items-center justify-center mb-2">
+          <i class="fas fa-box text-blue-900 text-3xl"></i>
+        </div>
+        <h3 class="text-gray-600 text-sm font-semibold">Total Products</h3>
+        <p class="text-3xl font-bold text-blue-900 mt-2">{{ total_products }}</p>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-lg p-6 text-center transform transition hover:scale-105">
+        <div class="flex items-center justify-center mb-2">
+          <i class="fas fa-check-circle text-green-600 text-3xl"></i>
+        </div>
+        <h3 class="text-gray-600 text-sm font-semibold">Active Listings</h3>
+        <p class="text-3xl font-bold text-green-600 mt-2">{{ active_products }}</p>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-lg p-6 text-center transform transition hover:scale-105">
+        <div class="flex items-center justify-center mb-2">
+          <i class="fas fa-exclamation-triangle text-orange-600 text-3xl"></i>
+        </div>
+        <h3 class="text-gray-600 text-sm font-semibold">Low Stock</h3>
+        <p class="text-3xl font-bold text-orange-600 mt-2">{{ low_stock }}</p>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-lg p-6 text-center transform transition hover:scale-105">
+        <div class="flex items-center justify-center mb-2">
+          <i class="fas fa-times-circle text-red-600 text-3xl"></i>
+        </div>
+        <h3 class="text-gray-600 text-sm font-semibold">Out of Stock</h3>
+        <p class="text-3xl font-bold text-red-600 mt-2">{{ out_of_stock }}</p>
+      </div>
+    </div>
+
+    {% if products %}
+    <form id="bulk-action-form" method="post" action="{% url 'sellers:bulk_delete_products' %}">
+      {% csrf_token %}
+      
+      <!-- Products Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+        {% for product in products %}
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden product-card transition-all duration-300 relative group flex flex-col justify-between">
+
+          <div>
+            <!-- Selection Checkbox -->
+            <div class="absolute top-3 left-3 z-10">
+              <input type="checkbox" name="product_ids" value="{{ product.id }}" onchange="updateBulkActions()"
+                class="w-5 h-5 text-blue-600 bg-white border-gray-300 rounded focus:ring-blue-500 cursor-pointer shadow-sm">
+            </div>
+
+            <!-- Product Image Container -->
+            <div class="relative w-full h-56 bg-gray-200 overflow-hidden block">
+              {% if product.main_image %}
+              <img src="{{ product.main_image.url }}" alt="{{ product.name }}" class="w-full h-full object-cover block">
+              {% else %}
+              <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-100 to-blue-200">
+                <i class="fas fa-image text-6xl text-blue-300"></i>
+              </div>
+              {% endif %}
+
+              <!-- Badges inside Image Area -->
+              <div class="absolute top-3 left-10 flex flex-col gap-2">
+                {% if product.is_available %}
+                <span class="badge-green px-3 py-1 rounded-full text-xs font-bold shadow-sm">
+                  <i class="fas fa-check"></i> Active
+                </span>
+                {% else %}
+                <span class="badge-red px-3 py-1 rounded-full text-xs font-bold shadow-sm">
+                  <i class="fas fa-times"></i> Inactive
+                </span>
+                {% endif %}
+
+                {% if product.stock == 0 %}
+                <span class="badge-red px-3 py-1 rounded-full text-xs font-bold shadow-sm">
+                  Out of Stock
+                </span>
+                {% elif product.stock <= 10 %} 
+                <span class="badge-orange px-3 py-1 rounded-full text-xs font-bold shadow-sm">
+                  Low Stock
+                </span>
+                {% endif %}
+
+                {% if product.discount_percentage > 0 %}
+                <span class="bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-sm">
+                  -{{ product.discount_percentage }}%
+                </span>
+                {% endif %}
+              </div>
+
+              <!-- Stock Count -->
+              <div class="absolute top-3 right-3 bg-black bg-opacity-70 text-white px-3 py-1 rounded-full text-xs font-bold shadow-sm">
+                Stock: {{ product.stock }}
+              </div>
+            </div>
+
+            <!-- Product Info -->
+            <div class="p-4">
+              <div class="mb-2">
+                <span class="text-xs text-blue-600 font-semibold">{{ product.category.name }}</span>
+              </div>
+
+              <h3 class="text-lg font-bold text-gray-800 mb-2 line-clamp-2" title="{{ product.name }}">
+                {{ product.name }}
+              </h3>
+
+              <p class="text-gray-600 text-sm mb-3 line-clamp-2">
+                {{ product.description|truncatewords:15 }}
+              </p>
+
+              <!-- Pricing -->
+              <div class="mb-3">
+                <div class="flex items-center gap-2">
+                  {% if product.discount_percentage > 0 %}
+                  <span class="text-2xl font-bold text-blue-900">₨{{ product.get_discount_price|floatformat:0 }}</span>
+                  <span class="text-sm text-gray-400 line-through">₨{{ product.price|floatformat:0 }}</span>
+                  {% else %}
+                  <span class="text-2xl font-bold text-blue-900">₨{{ product.price|floatformat:0 }}</span>
+                  {% endif %}
+                </div>
+              </div>
+
+              <!-- Rating -->
+              <div class="flex items-center gap-1 mb-2">
+                <div class="flex text-yellow-400">
+                  {% for i in "12345" %}
+                    {% if forloop.counter <= product.rating %} 
+                      <i class="fas fa-star"></i>
+                    {% else %}
+                      <i class="far fa-star"></i>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+                <span class="text-sm text-gray-600">({{ product.num_reviews }})</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions button bottom aligned -->
+          <div class="p-4 pt-0">
+            <div class="flex gap-2">
+              <a href="{% url 'sellers:product_preview' product.pk %}"
+                class="flex-1 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition text-center text-sm font-semibold">
+                <i class="fas fa-eye"></i> View
+              </a>
+            </div>
+          </div>
+
+        </div>
+        {% endfor %} <!-- Loop properly ends here now! -->
+      </div>
+    </form>
+
+    <!-- Pagination -->
+    {% if products.has_other_pages %}
+    <div class="flex justify-center mt-8">
+      <nav class="flex items-center gap-2">
+        {% if products.has_previous %}
+        <a href="?page={{ products.previous_page_number }}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_stock %}&stock={{ current_stock }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}"
+          class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+          <i class="fas fa-chevron-left"></i>
+        </a>
+        {% endif %}
+
+        {% for i in products.paginator.page_range %}
+        {% if products.number == i %}
+        <span class="px-4 py-2 bg-blue-900 text-white rounded-lg">{{ i }}</span>
+        {% else %}
+        <a href="?page={{ i }}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_stock %}&stock={{ current_stock }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}"
+          class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">{{ i }}</a>
+        {% endif %}
+        {% endfor %}
+
+        {% if products.has_next %}
+        <a href="?page={{ products.next_page_number }}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_stock %}&stock={{ current_stock }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}"
+          class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+          <i class="fas fa-chevron-right"></i>
+        </a>
+        {% endif %}
+      </nav>
+    </div>
+    {% endif %}
+
+    {% else %}
+    <!-- Empty State -->
+    <div class="bg-white rounded-2xl shadow-lg p-12 text-center">
+      <i class="fas fa-box-open text-6xl text-gray-300 mb-4"></i>
+      <h3 class="text-2xl font-bold text-gray-800 mb-2">No Products Yet</h3>
+      <p class="text-gray-600 mb-6">Start by adding your first product to the store.</p>
+      <a href="{% url 'sellers:add_product' %}"
+        class="inline-block bg-blue-900 text-white px-8 py-3 rounded-lg hover:bg-blue-800 transition font-semibold">
+        <i class="fas fa-plus mr-2"></i>Add Your First Product
+      </a>
+    </div>
+    {% endif %}
+
+  </div>
+
+  <script>
+    function editProduct(productId) {
+      window.location.href = `/sellers/edit-product/${productId}/`;
+    }
+
+    function updateBulkActions() {
+      const checkboxes = document.querySelectorAll('input[name="product_ids"]:checked');
+      const count = checkboxes.length;
+      const toolbar = document.getElementById('bulk-actions');
+      const countSpan = document.getElementById('selected-count');
+
+      countSpan.textContent = count;
+
+      if (count > 0) {
+        toolbar.classList.remove('hidden');
+        toolbar.classList.add('flex');
+      } else {
+        toolbar.classList.add('hidden');
+        toolbar.classList.remove('flex');
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        deselectAll();
+    });
+
+    function deselectAll() {
+      const checkboxes = document.querySelectorAll('input[name="product_ids"]');
+      checkboxes.forEach(cb => cb.checked = false);
+      updateBulkActions();
+    }
+
+    function submitBulkDelete() {
+      if (confirm('Are you sure you want to delete the selected products? This action cannot be undone.')) {
+        document.getElementById('bulk-action-form').submit();
+      }
+    }
+  </script>
+
+</body>
+</html>

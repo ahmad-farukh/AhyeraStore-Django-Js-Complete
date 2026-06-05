@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ahyera Store</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    .font-logo {
+      font-family: 'Playfair Display', serif;
+    }
+
+    .font-body {
+      font-family: 'Inter', sans-serif;
+    }
+
+    .hover-lift {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .hover-lift:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 40px rgba(20, 94, 253, 0.2);
+    }
+
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.7;
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-gray-50 font-body">
+
+  <!-- Your Normal Page Content -->
+  <div class="max-w-7xl mx-auto px-6 py-20 text-center">
+    <h1 class="text-6xl font-logo font-bold bg-gradient-to-r from-blue-600 to-pink-600 bg-clip-text text-transparent">
+      Welcome to Ahyera Store
+    </h1>
+    <p class="text-xl text-gray-600 mt-6">Your luxury shopping experience just got smarter</p>
+  </div>
+
+  <!-- AI CHATBOT WIDGET (Floating) -->
+  <div id="ai-chatbot" class="fixed bottom-6 right-6 z-50">
+    <!-- Floating Button -->
+    <button id="chat-toggle"
+      class="w-16 h-16 bg-gradient-to-r from-blue-600 to-pink-600 text-white rounded-full shadow-2xl flex items-center justify-center text-3xl hover:scale-110 transition transform pulse">
+      <i class="fas fa-robot"></i>
+    </button>
+
+    <!-- Chat Window -->
+    <div id="chat-window"
+      class="absolute bottom-20 right-0 w-96 bg-white rounded-3xl shadow-2xl overflow-hidden transform scale-0 transition-all duration-300 origin-bottom-right">
+      <div class="bg-gradient-to-r from-blue-600 to-pink-600 text-white p-5 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-white/20 rounded-full flex-center">
+            <i class="fas fa-robot text-xl"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-lg">Ahyera AI Assistant</h3>
+            <p class="text-xs opacity-90">Always here to help</p>
+          </div>
+        </div>
+        <button onclick="toggleChat()" class="text-white hover:bg-white/20 p-2 rounded-lg transition">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <!-- Chat Body -->
+      <div id="chat-body" class="h-96 overflow-y-auto p-5 space-y-4 bg-gray-50">
+        <div class="flex items-start gap-3">
+          <div
+            class="w-10 h-10 bg-gradient-to-r from-blue-600 to-pink-600 rounded-full flex-center text-white flex-shrink-0">
+            <i class="fas fa-robot"></i>
+          </div>
+          <div class="bg-white rounded-2xl px-5 py-3 shadow-md max-w-xs">
+            <p class="text-gray-800">Hello! I'm Ahyera's AI Assistant</p>
+            <p class="text-sm text-gray-500 mt-1">How can I help you today?</p>
+          </div>
+        </div>
+
+        <!-- Quick Action Capsules -->
+        <div class="grid grid-cols-1 gap-3 mt-4">
+          <button onclick="sendQuick('return')"
+            class="bg-white hover:bg-pink-50 border border-pink-200 rounded-2xl p-4 text-left flex items-center gap-4 hover-lift transition">
+            <i class="fas fa-undo text-2xl text-pink-600"></i>
+            <div>
+              <p class="font-bold text-gray-800">Returns & Exchange</p>
+              <p class="text-sm text-gray-600">30-day easy returns</p>
+            </div>
+          </button>
+          <button onclick="sendQuick('help')"
+            class="bg-white hover:bg-purple-50 border border-purple-200 rounded-2xl p-4 text-left flex items-center gap-4 hover-lift transition">
+            <i class="fas fa-headset text-2xl text-purple-600"></i>
+            <div>
+              <p class="font-bold text-gray-800">Help Center</p>
+              <p class="text-sm text-gray-600">FAQs & Support</p>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Input Area -->
+      <div class="p-4 bg-white border-t">
+        <div class="flex gap-3">
+          <input type="text" id="user-input" placeholder="Type your message..."
+            class="flex-1 px-5 py-3 border border-gray-300 rounded-full focus:outline-none focus:border-pink-600 transition">
+          <button onclick="sendMessage()"
+            class="bg-gradient-to-r from-blue-600 to-pink-600 text-white w-12 h-12 rounded-full flex-center hover:scale-110 transition">
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </div>
+        <p class="text-xs text-gray-500 text-center mt-3">Powered by Ahyera AI • <span
+            class="text-pink-600 cursor-pointer hover:underline">Connect to Human</span></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Chatbot Toggle
+    function toggleChat() {
+      const window = document.getElementById("chat-window");
+      const toggle = document.getElementById("chat-toggle");
+      window.classList.toggle("scale-0");
+      window.classList.toggle("scale-100");
+      if (window.classList.contains("scale-100")) {
+        toggle.classList.remove("pulse");
+      } else {
+        toggle.classList.add("pulse");
+      }
+    }
+
+    // Send Message
+    function sendMessage() {
+      const input = document.getElementById("user-input");
+      const msg = input.value.trim();
+      if (!msg) return;
+
+      addMessage(msg, "user");
+      input.value = "";
+
+      setTimeout(() => {
+        addMessage("I'm checking that for you... One moment please!", "bot");
+        setTimeout(() => {
+          addMessage("Your request has been noted. A human agent will assist you shortly.", "bot");
+        }, 1500);
+      }, 1000);
+    }
+
+    // Quick Actions
+    function sendQuick(type) {
+      let reply = "";
+      if (type === "return") reply = "You can return within 30 days. Would you like to start a return?";
+      if (type === "help") reply = "Here are common topics: Shipping, Returns, Size Guide, Payment";
+
+      addMessage(reply, "bot");
+    }
+
+    // Add Message to Chat
+    function addMessage(text, sender) {
+      const chatBody = document.getElementById("chat-body");
+      const div = document.createElement("div");
+      div.className = sender === "user" ? "flex justify-end" : "flex items-start gap-3";
+
+      if (sender === "user") {
+        div.innerHTML = `<div class="bg-gradient-to-r from-blue-600 to-pink-600 text-white rounded-2xl px-5 py-3 shadow-md max-w-xs">${text}</div>`;
+      } else {
+        div.innerHTML = `
+          <div class="w-10 h-10 bg-gradient-to-r from-blue-600 to-pink-600 rounded-full flex-center text-white flex-shrink-0">
+            <i class="fas fa-robot"></i>
+          </div>
+          <div class="bg-white rounded-2xl px-5 py-3 shadow-md max-w-xs">${text}</div>
+        `;
+      }
+
+      chatBody.appendChild(div);
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    // Enter key to send
+    document.getElementById("user-input").addEventListener("keypress", function (e) {
+      if (e.key === "Enter") sendMessage();
+    });
+
+    // Open chatbot on load (optional)
+    // setTimeout(toggleChat, 3000);
+  </script>
+
+</body>
+
+</html>

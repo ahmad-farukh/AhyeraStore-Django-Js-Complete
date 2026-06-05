@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ahyera Store - Shop All</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#1e40af',   // Deep Blue
+            accent: '#e11d48',    // Luxury Pink-Red
+          },
+          fontFamily: {
+            heading: ['"Playfair Display"', 'serif'],
+            body: ['Inter', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body class="bg-gray-50 font-body relative z-0">
+
+  <header class="bg-white shadow-sm sticky top-0 z-50 relative">
+    <div class="max-w-7xl mx-auto px-4 py-5 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <div class="w-12 h-12 bg-gradient-to-r from-primary to-blue-700 rounded-full flex items-center justify-center text-white font-bold text-xl">AS</div>
+        <h1 class="text-3xl font-heading font-bold text-primary">Ahyera Store</h1>
+      </div>
+      <div class="hidden md:block">
+        <input type="text" placeholder="Search dresses, sarees, lehengas..." class="w-96 px-5 py-3 rounded-full border focus:outline-none focus:ring-2 focus:ring-accent">
+      </div>
+      <div class="flex items-center gap-6">
+        <a href="#" class="hidden md:block hover:text-accent"><i class="far fa-heart text-xl"></i></a>
+        <a href="#" class="relative hover:text-accent">
+          <i class="fas fa-shopping-bag text-xl"></i>
+          <span class="absolute -top-2 -right-3 bg-accent text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">8</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <div class="bg-white border-b relative z-10">
+    <div class="max-w-7xl mx-auto px-4 py-4 text-sm">
+      <span class="text-gray-500">Home</span> 
+      <i class="fas fa-chevron-right mx-2 text-gray-400"></i> 
+      <span class="text-accent font-medium">All Products</span>
+    </div>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-4 py-8 relative z-10">
+    <div class="flex flex-col lg:flex-row gap-8">
+
+      <aside class="lg:w-72 bg-white rounded-xl shadow-sm p-6 h-fit relative z-20">
+        <h3 class="text-xl font-bold mb-6">Filters</h3>
+
+        <div class="mb-8">
+          <h4 class="font-semibold mb-4">Price Range</h4>
+          <div class="space-y-3 text-gray-700">
+            <label class="flex items-center gap-3"><input type="checkbox" class="filter-item" data-type="price" data-min="0" data-max="50000"> Under PKR 50,000</label>
+            <label class="flex items-center gap-3"><input type="checkbox" class="filter-item" data-type="price" data-min="50000" data-max="100000"> PKR 50,000 - 100,000</label>
+            <label class="flex items-center gap-3"><input type="checkbox" class="filter-item" data-type="price" data-min="100000" data-max="200000"> PKR 100,000 - 200,000</label>
+            <label class="flex items-center gap-3"><input type="checkbox" class="filter-item" data-type="price" data-min="200000"> Above PKR 200,000</label>
+          </div>
+        </div>
+
+        <div class="mb-8">
+          <h4 class="font-semibold mb-4">Color</h4>
+          <div class="grid grid-cols-6 gap-3">
+            <label><input type="checkbox" class="filter-item hidden" data-type="color" data-value="Red"><span class="block w-10 h-10 bg-red-600 rounded-full cursor-pointer ring-4 ring-red-200"></span></label>
+            <label><input type="checkbox" class="filter-item hidden" data-type="color" data-value="Pink"><span class="block w-10 h-10 bg-pink-500 rounded-full cursor-pointer ring-4 ring-pink-200"></span></label>
+            <label><input type="checkbox" class="filter-item hidden" data-type="color" data-value="Gold"><span class="block w-10 h-10 bg-yellow-600 rounded-full cursor-pointer ring-4 ring-yellow-200"></span></label>
+            <label><input type="checkbox" class="filter-item hidden" data-type="color" data-value="Ivory"><span class="block w-10 h-10 bg-gray-100 rounded-full cursor-pointer ring-4 ring-gray-300"></span></label>
+            <label><input type="checkbox" class="filter-item hidden" data-type="color" data-value="Black"><span class="block w-10 h-10 bg-gray-900 rounded-full cursor-pointer ring-4 ring-gray-700"></span></label>
+            <label><input type="checkbox" class="filter-item hidden" data-type="color" data-value="Blue"><span class="block w-10 h-10 bg-blue-700 rounded-full cursor-pointer ring-4 ring-blue-300"></span></label>
+          </div>
+        </div>
+
+        <div class="mb-8">
+          <h4 class="font-semibold mb-4">Rating</h4>
+          <div class="space-y-3">
+            <label class="flex items-center gap-3"><input type="checkbox" class="filter-item" data-type="rating" data-value="4"> 4 Stars & Up</label>
+            <label class="flex items-center gap-3"><input type="checkbox" class="filter-item" data-type="rating" data-value="3"> 3 Stars & Up</label>
+          </div>
+        </div>
+
+        <button id="clear-all" class="w-full bg-gray-100 py-3 rounded-xl font-medium hover:bg-gray-200 transition">
+          Clear All Filters
+        </button>
+      </aside>
+
+      <div class="flex-1 relative ">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+          <p class="text-gray-600" id="result-count">48 Products Found</p>
+          <select id="sort-options" class="px-6 py-3 border rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-accent">
+            <option>Relevance</option>
+            <option>Trending</option>
+            <option>Latest</option>
+            <option>Price: Low to High</option>
+            <option>Price: High to Low</option>
+          </select>
+        </div>
+
+        <div id="active-filters" class="flex flex-wrap gap-3 mb-6"></div>
+
+        <div id="products-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          </div>
+      </div>
+    </div>
+  </div>
+<footer class="bg-gray-700 text-white border-2 border-white py-12 mt-16">
+  <div class="max-w-7xl mx-auto px-4 text-left">
+    <h1 class="text-4xl font-heading font-bold mb-3">Ahyera Store</h1>
+    <p class="text-gray-400">Pakistan's Most Trusted Luxury Fashion Destination</p>
+  </div>
+</footer>
+
+  <script src="./products.js"></script>
+</body>
+</html>

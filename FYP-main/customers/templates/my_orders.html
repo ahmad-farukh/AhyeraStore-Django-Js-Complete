@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Orders • Ahyera Store</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    .font-logo {
+      font-family: 'Playfair Display', serif;
+    }
+
+    .font-body {
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-50 font-body min-h-screen">
+
+  <!-- Navbar -->
+  <nav class="bg-white shadow-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
+      <div class="flex items-center gap-4">
+        <div
+          class="w-12 h-12 bg-gradient-to-r from-blue-600 to-pink-600 rounded-full flex items-center justify-center text-white font-bold text-xl">
+          AS</div>
+        <h1 class="text-3xl font-logo text-gray-800">Ahyera Store</h1>
+      </div>
+      <div class="flex items-center gap-8 text-gray-700">
+        <a href="customer_home.html" class="hover:text-pink-600 font-medium">Home</a>
+        <a href="my_orders.html" class="font-bold text-pink-600">My Orders</a>
+        <a href="my_addresses.html" class="hover:text-pink-600 font-medium">Addresses</a>
+        <a href="customer_profile.html" class="hover:text-pink-600 font-medium">Profile</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <div class="bg-white border-b">
+    <div class="max-w-7xl mx-auto px-6 py-10">
+      <h1 class="text-4xl font-bold text-gray-800">My Orders</h1>
+      <p class="text-gray-600 mt-2">View and manage all your orders in one place</p>
+    </div>
+  </div>
+
+  <!-- Orders List -->
+  <div class="max-w-7xl mx-auto px-6 py-12">
+
+    <!-- Order Item -->
+    <div class="bg-white rounded-2xl shadow-md border mb-8 overflow-hidden">
+      <div class="bg-gradient-to-r from-blue-600 to-pink-600 text-white p-6">
+        <div class="flex justify-between items-center">
+          <div>
+            <p class="text-sm opacity-90">Order ID: <span class="font-bold">#AHY-2025-0481</span></p>
+            <p class="text-sm opacity-90">Placed on: 24 Nov 2025</p>
+          </div>
+          <span class="bg-white/20 px-4 py-2 rounded-full text-sm font-bold">Delivered</span>
+        </div>
+      </div>
+      <div class="p-6">
+        <div class="grid md:grid-cols-4 gap-6 items-center">
+          <div class="md:col-span-3">
+            <div class="flex gap-6">
+              <img src="https://via.placeholder.com/100/f00/fff?text=Lehenga" class="w-24 h-24 rounded-xl object-cover">
+              <div>
+                <h3 class="font-bold text-lg text-gray-800">Royal Crimson Bridal Lehenga</h3>
+                <p class="text-gray-600">Size: M | Qty: 1</p>
+                <p class="text-xl font-bold text-pink-600 mt-2">PKR 285,000</p>
+              </div>
+            </div>
+          </div>
+          <div class="text-right">
+            <button class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-3 rounded-xl font-medium">View
+              Details</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Another Order -->
+    <div class="bg-white rounded-2xl shadow-md border mb-8 overflow-hidden">
+      <div class="bg-gradient-to-r from-blue-600 to-pink-600 text-white p-6">
+        <div class="flex justify-between items-center">
+          <div>
+            <p class="text-sm opacity-90">Order ID: <span class="font-bold">#AHY-2025-0479</span></p>
+            <p class="text-sm opacity-90">Placed on: 18 Nov 2025</p>
+          </div>
+          <span class="bg-yellow-500 text-white px-4 py-2 rounded-full text-sm font-bold">Shipped</span>
+        </div>
+      </div>
+      <div class="p-6">
+        <div class="grid md:grid-cols-4 gap-6 items-center">
+          <div class="md:col-span-3">
+            <div class="flex gap-6">
+              <img src="https://via.placeholder.com/100/111/fff?text=iPhone" class="w-24 h-24 rounded-xl object-cover">
+              <div>
+                <h3 class="font-bold text-lg text-gray-800">iPhone 16 Pro Max (512GB)</h3>
+                <p class="text-gray-600">Color: Black Titanium | Qty: 1</p>
+                <p class="text-xl font-bold text-pink-600 mt-2">PKR 425,000</p>
+              </div>
+            </div>
+          </div>
+          <div class="text-right">
+            <button class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-3 rounded-xl font-medium">View
+              Details</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- More orders can be added here -->
+
+    <!-- Empty State (if no orders) -->
+    <div class="text-center py-20">
+      <i class="fas fa-box-open text-8xl text-gray-300 mb-6"></i>
+      <h3 class="text-3xl font-bold text-gray-600">No Orders Yet</h3>
+      <p class="text-gray-500 mt-4">Your ordered items will appear here</p>
+      <a href="customer_home.html"
+        class="mt-6 inline-block bg-gradient-to-r from-blue-600 to-pink-600 text-white px-10 py-4 rounded-xl font-bold">Start
+        Shopping</a>
+    </div>
+
+  </div>
+
+  <footer class="bg-gray-900 text-white py-12 text-center mt-16">
+    <h1 class="text-4xl font-logo mb-4">Ahyera Store</h1>
+    <p>© 2025 • Pakistan's Premium Fashion & Tech Store</p>
+  </footer>
+</body>
+
+</html>

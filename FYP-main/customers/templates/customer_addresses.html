@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Addresses • Ahyera Store</title>
+  <script defer src="./customer_addresses.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    .font-logo { font-family: 'Playfair Display', serif; }
+    .font-body { font-family: 'Inter', sans-serif; }
+  </style>
+</head>
+<body class="bg-gray-50 font-body min-h-screen">
+
+  <!-- Navbar -->
+  <nav class="bg-white shadow-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
+      <div class="flex items-center gap-4">
+        <div class="w-12 h-12 bg-gradient-to-r from-blue-600 to-pink-600 rounded-full flex items-center justify-center text-white font-bold text-xl">AS</div>
+        <h1 class="text-3xl font-logo text-gray-800">Ahyera Store</h1>
+      </div>
+      <div class="flex items-center gap-8 text-gray-700">
+        <a href="customer_home.html" class="hover:text-pink-600 font-medium">Home</a>
+        <a href="my_orders.html" class="hover:text-pink-600 font-medium">My Orders</a>
+        <a href="#" class="font-bold text-pink-600">Addresses</a>
+        <a href="customer_profile.html" class="hover:text-pink-600 font-medium">Profile</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <div class="bg-white border-b">
+    <div class="max-w-7xl mx-auto px-6 py-10">
+      <h1 class="text-4xl font-bold text-gray-800">My Addresses</h1>
+      <p class="text-gray-600 mt-2">Add, edit or remove your delivery addresses</p>
+    </div>
+  </div>
+
+  <!-- Addresses Grid -->
+  <div class="max-w-7xl mx-auto px-6 py-12">
+    <div id="addresses-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <!-- JS will fill this -->
+    </div>
+
+    <!-- Add New Button -->
+    <div class="mt-10 text-center">
+      <button onclick="openAddModal()" class="bg-gradient-to-r from-blue-600 to-pink-600 text-white px-10 py-5 rounded-xl font-bold text-lg hover:shadow-xl transition">
+        Add New Address
+      </button>
+    </div>
+  </div>
+
+  <!-- Modal (Hidden by default) -->
+  <div id="address-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-lg mx-4">
+      <h3 id="modal-title" class="text-2xl font-bold text-gray-800 mb-6">Add New Address</h3>
+      
+      <form id="address-form">
+        <div class="space-y-5">
+          <input type="text" id="full-name" placeholder="Full Name" required class="w-full px-5 py-4 border border-gray-300 rounded-xl focus:outline-none focus:border-pink-600">
+          <input type="text" id="phone" placeholder="Phone Number (+92...)" required class="w-full px-5 py-4 border border-gray-300 rounded-xl focus:outline-none focus:border-pink-600">
+          <textarea id="address" rows="3" placeholder="House no, Street, Area" required class="w-full px-5 py-4 border border-gray-300 rounded-xl focus:outline-none focus:border-pink-600"></textarea>
+          <input type="text" id="city" placeholder="City" value="Karachi" required class="w-full px-5 py-4 border border-gray-300 rounded-xl focus:outline-none focus:border-pink-600">
+          
+          <label class="flex items-center gap-3 cursor-pointer">
+            <input type="checkbox" id="is-default" class="w-5 h-5 text-pink-600 rounded focus:ring-pink-500">
+            <span class="text-gray-700 font-medium">Make this my default address</span>
+          </label>
+        </div>
+
+        <div class="flex gap-4 mt-8">
+          <button type="submit" class="flex-1 bg-gradient-to-r from-blue-600 to-pink-600 text-white py-4 rounded-xl font-bold hover:shadow-xl transition">
+            Save Address
+          </button>
+          <button type="button" onclick="closeModal()" class="flex-1 bg-gray-200 text-gray-700 py-4 rounded-xl font-medium hover:bg-gray-300 transition">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-white py-12 text-center mt-16">
+    <h1 class="text-4xl font-logo mb-4">Ahyera Store</h1>
+    <p>© 2025 • Pakistan's Premium Fashion & Tech Store</p>
+  </footer>
+
+  <!-- External JS -->
+</body>
+</html>

@@ -1,0 +1,54 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Seller - Delivery Area</title>
+  <link href="{% static 'css/output.css' %}" rel="stylesheet">
+  <script defer src="{% static 'js/seller_dilvery.js' %}"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.css" />
+  <style>
+    #map {
+      height: 340px;
+      border-radius: 12px;
+      border: 3px solid #1e40af;
+    }
+
+    .city-tag {
+      background-color: #dbeafe;
+      color: #1e3a8a;
+      padding: 0.375rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+
+  <div class="container mx-auto px-4 py-6 max-w-6xl">
+    <a href="{{ request.META.HTTP_REFERER|default:'/sellers/dashboard/' }}"
+      class="inline-block mb-6 bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-3 rounded-xl font-medium">
+      Back
+    </a>
+
+    <div class="mt-6 bg-red-50 border border-red-300 rounded-lg p-5 text-center">
+      <p class="text-red-700 font-bold">Customer sees this if outside area:</p>
+      <div class="bg-white inline-block mt-3 px-6 py-4 rounded-lg border-2 border-red-300">
+        <p class="text-red-700 font-bold text-sm">
+          This seller does not deliver to your area.
+        </p>
+      </div>
+    </div>
+
+    {{ delivery_cities|json_script:"delivery-cities-data" }}
+  </div>
+
+</body>
+
+</html>

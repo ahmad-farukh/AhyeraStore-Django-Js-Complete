@@ -1,0 +1,121 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Seller - Sales Analytics</title>
+  <link href="{% static 'css/output.css' %}" rel="stylesheet">
+  <script defer src="{% static 'js/seller_graphing_sales.js' %}"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    canvas {
+      border-radius: 12px;
+      background: white;
+      box-shadow: 0 4px 15px rgba(30, 64, 175, 0.1);
+    }
+
+    .kpi-card {
+      background: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+      padding: 1rem;
+      text-align: center;
+      border: 1px solid #dbeafe;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+
+  <div class="container mx-auto px-4 py-6 max-w-6xl">
+
+    <!-- Header -->
+    <div class="bg-white rounded-lg shadow p-4 mb-5 flex justify-between items-center">
+      <div class="flex items-center gap-4">
+        <a href="{{ request.META.HTTP_REFERER|default:'/sellers/dashboard/' }}"
+          class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-5 py-2 rounded-lg font-medium">
+          Back
+        </a>
+        <h1 class="text-xl font-bold text-blue-900">Sales Analytics Dashboard</h1>
+      </div>
+      <select id="timeFilter" class="px-4 py-2 border border-blue-900 rounded-lg text-blue-900 font-medium text-sm">
+        <option>Last 7 Days</option>
+        <option>Last 30 Days</option>
+        <option>Last 90 Days</option>
+        <option>This Year</option>
+      </select>
+    </div>
+
+    <!-- KPIs Row -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      <div class="kpi-card">
+        <p class="text-gray-600 text-xs">Total Revenue</p>
+        <p class="text-2xl font-bold text-blue-900">₨{{ stats.total_revenue|floatformat:0 }}</p>
+      </div>
+      <div class="kpi-card">
+        <p class="text-gray-600 text-xs">Orders</p>
+        <p class="text-2xl font-bold text-green-600">{{ stats.total_orders }}</p>
+      </div>
+      <div class="kpi-card">
+        <p class="text-gray-600 text-xs">Units Sold</p>
+        <p class="text-2xl font-bold text-purple-600">{{ stats.units_sold }}</p>
+      </div>
+      <div class="kpi-card">
+        <p class="text-gray-600 text-xs">Avg Order Value</p>
+        <p class="text-2xl font-bold text-orange-600">₨{{ stats.average_order_value|floatformat:0 }}</p>
+      </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-6">
+      <div class="bg-white rounded-lg shadow p-4">
+        <h3 class="text-lg font-bold text-blue-900 mb-3">Daily Sales Trend</h3>
+        <canvas id="dailyChart"></canvas>
+      </div>
+      <div class="bg-white rounded-lg shadow p-4">
+        <h3 class="text-lg font-bold text-blue-900 mb-3">Monthly Revenue</h3>
+        <canvas id="monthlyChart"></canvas>
+      </div>
+    </div>
+
+    {{ daily_sales|json_script:"daily-sales-data" }}
+    {{ monthly_sales|json_script:"monthly-sales-data" }}
+    {{ top_products|json_script:"top-products-data" }}
+
+    <!-- Bottom Row: Top Products + Low Stock -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+      <!-- Top 5 Products -->
+      <div class="lg:col-span-2 bg-white rounded-lg shadow p-4">
+        <h3 class="text-lg font-bold text-blue-900 mb-4">Top 5 Best Selling Products</h3>
+        <div id="topProducts" class="space-y-3">
+          <!-- JS se fill hoga -->
+        </div>
+      </div>
+
+      <!-- Low Stock Alert -->
+      <div class="bg-white rounded-lg shadow p-4">
+        <h3 class="text-lg font-bold text-red-700 mb-4 flex items-center gap-2">
+          <i class="fas fa-exclamation-triangle"></i> Low Stock Alerts
+        </h3>
+        <div id="lowStock" class="space-y-2 text-sm">
+          {% for p in low_stock_products %}
+          <div class="bg-red-50 border border-red-300 rounded p-3">
+            <p class="font-bold">{{ p.name }}</p>
+            <p class="text-red-700">Only {{ p.stock }} units left!</p>
+          </div>
+          {% empty %}
+          <div class="bg-gray-50 border border-gray-200 rounded p-3">
+            <p class="font-bold">No low stock products</p>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+
+</html>

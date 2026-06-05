@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+
+{% block title %}Negotiated Checkout - Ahyera Store{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 py-12">
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-4xl md:text-5xl font-heading font-bold text-gray-800">Secure Checkout</h1>
+        <a href="{% url 'products:negotiate' product.slug %}" class="text-pink-600 font-bold hover:underline">
+            <i class="fas fa-arrow-left mr-2"></i>Back to Negotiation
+        </a>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-lg p-6 mb-8 border border-gray-100">
+        <p class="text-gray-600">Locked negotiated price</p>
+        <p class="text-3xl font-bold text-pink-600">PKR {{ negotiated_order.negotiated_price }}</p>
+        {% if negotiated_order.expires_at %}
+        <p class="text-sm text-gray-500 mt-2">Expires at: {{ negotiated_order.expires_at|date:"d M Y, H:i" }}</p>
+        {% endif %}
+    </div>
+
+    <form method="post" action="{% url 'checkout_with_negotiation' negotiated_order.id %}" class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+        {% csrf_token %}
+
+        <div class="lg:col-span-2 space-y-8">
+            <div class="bg-white rounded-2xl shadow-lg p-8">
+                <h2 class="text-2xl font-bold mb-6">Contact Information</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <input type="text" name="full_name" placeholder="Full Name" required
+                        value="{{ user.get_full_name }}"
+                        class="w-full px-6 py-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500">
+                    <input type="tel" name="phone" placeholder="Phone (03xx-xxxxxxx)" required
+                        value="{{ user.customer_profile.phone|default:'' }}"
+                        class="w-full px-6 py-4 rounded-xl border focus:outline-none focus:ring-2 focus:ring-pink-500">
+                </div>
+                <input type="email" name="email" placeholder="Email" value="{{ user.email }}"
+                    class="w-full px-6 py-4 rounded-xl border mt-6 focus:outline-none focus:ring-2 focus:ring-pink-500">
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-lg p-8">
+                <h2 class="text-2xl font-bold mb-6">Delivery Address</h2>
+
+                {% if user.shipping_addresses.all %}
+                <div class="mb-6">
+                    <label class="block text-gray-700 font-medium mb-3">Select Saved Address</label>
+                    <select name="saved_address" id="saved-address"
+                        class="w-full px-6 py-4 rounded-xl border focus:outline-none focus:ring-2 focus:ring-pink-500">
+                        <option value="">Enter New Address</option>
+                        {% for address in user.shipping_addresses.all %}
+                        <option value="{{ address.id }}" {% if address.is_default %}selected{% endif %}>
+                            {{ address.full_name }} - {{ address.city }}, {{ address.address_line_1 }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% endif %}
+
+                <div id="new-address-fields">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <input type="text" name="city" placeholder="City" required
+                            class="w-full px-6 py-4 rounded-xl border focus:outline-none focus:ring-2 focus:ring-pink-500">
+                        <input type="text" name="state" placeholder="State/Province" required
+                            class="w-full px-6 py-4 rounded-xl border focus:outline-none focus:ring-2 focus:ring-pink-500">
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                        <input type="text" name="postal_code" placeholder="Postal Code" required
+                            class="w-full px-6 py-4 rounded-xl border focus:outline-none focus:ring-2 focus:ring-pink-500">
+                        <input type="text" name="country" value="Pakistan" required
+                            class="w-full px-6 py-4 rounded-xl border focus:outline-none focus:ring-2 focus:ring-pink-500">
+                    </div>
+                    <textarea name="address_line_1" placeholder="Address Line 1 (House no, Street)" rows="2" required
+                        class="w-full px-6 py-4 rounded-xl border mt-6 focus:outline-none focus:ring-2 focus:ring-pink-500"></textarea>
+                    <textarea name="address_line_2" placeholder="Address Line 2 (Optional)" rows="2"
+                        class="w-full px-6 py-4 rounded-xl border mt-6 focus:outline-none focus:ring-2 focus:ring-pink-500"></textarea>
+                </div>
+
+                <label class="flex items-center gap-3 mt-6">
+                    <input type="checkbox" name="save_address" class="w-5 h-5 text-pink-600 rounded">
+                    <span class="text-gray-700">Save this address for future orders</span>
+                </label>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-lg p-8">
+                <h2 class="text-2xl font-bold mb-6">Payment Method</h2>
+                <div class="space-y-4">
+                    <label class="flex items-center gap-5 p-6 border-2 rounded-2xl cursor-pointer transition hover:shadow-md">
+                        <input type="radio" name="payment_method" value="cod" class="w-6 h-6 text-pink-600" checked>
+                        <div class="flex-1">
+                            <p class="font-bold text-lg">Cash on Delivery (COD)</p>
+                            <p class="text-gray-600">Pay when you receive your order</p>
+                        </div>
+                        <i class="fas fa-money-bill-wave text-4xl text-green-600"></i>
+                    </label>
+
+                    <label class="flex items-center gap-5 p-6 border-2 rounded-2xl cursor-pointer transition hover:shadow-md">
+                        <input type="radio" name="payment_method" value="jazzcash" class="w-6 h-6 text-pink-600">
+                        <div class="flex-1">
+                            <p class="font-bold text-lg">JazzCash</p>
+                            <p class="text-gray-600">Pay via JazzCash mobile wallet</p>
+                        </div>
+                        <i class="fas fa-mobile-alt text-4xl text-red-600"></i>
+                    </label>
+
+                    <label class="flex items-center gap-5 p-6 border-2 rounded-2xl cursor-pointer transition hover:shadow-md">
+                        <input type="radio" name="payment_method" value="easypaisa" class="w-6 h-6 text-pink-600">
+                        <div class="flex-1">
+                            <p class="font-bold text-lg">Easypaisa</p>
+                            <p class="text-gray-600">Pay via Easypaisa mobile wallet</p>
+                        </div>
+                        <i class="fas fa-wallet text-4xl text-green-600"></i>
+                    </label>
+
+                    <label class="flex items-center gap-5 p-6 border-2 rounded-2xl cursor-pointer transition hover:shadow-md">
+                        <input type="radio" name="payment_method" value="card" class="w-6 h-6 text-pink-600">
+                        <div class="flex-1">
+                            <p class="font-bold text-lg">Credit / Debit Card</p>
+                            <p class="text-gray-600">Pay securely with your card</p>
+                        </div>
+                        <i class="fas fa-credit-card text-4xl text-blue-600"></i>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="lg:col-span-1">
+            <div class="bg-white rounded-2xl shadow-lg p-8 sticky top-24">
+                <h2 class="text-2xl font-bold mb-6">Order Summary</h2>
+
+                <div class="space-y-5 mb-6">
+                    <div class="flex items-center gap-4 pb-4 border-b">
+                        <div class="w-16 h-16 flex-shrink-0">
+                            {% if product.main_image %}
+                            <img src="{{ product.main_image.url }}" alt="{{ product.name }}" class="w-full h-full object-cover rounded-lg">
+                            {% else %}
+                            <div class="w-full h-full bg-gray-200 rounded-lg flex items-center justify-center text-gray-400">
+                                <i class="fas fa-image"></i>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-bold text-sm text-gray-800">{{ product.name }}</p>
+                            <p class="text-xs text-gray-500">Qty: 1</p>
+                        </div>
+                        <p class="font-bold text-pink-600 text-sm">PKR {{ negotiated_order.negotiated_price }}</p>
+                    </div>
+                </div>
+
+                <div class="border-t pt-6 space-y-4 text-lg">
+                    <div class="flex justify-between">
+                        <span>Subtotal</span>
+                        <span class="font-bold">PKR {{ negotiated_order.negotiated_price }}</span>
+                    </div>
+                    <div class="flex justify-between text-green-600 font-bold">
+                        <span>Delivery Charges</span>
+                        <span>FREE</span>
+                    </div>
+                    <div class="flex justify-between text-2xl font-bold text-pink-600 pt-6 border-t">
+                        <span>Grand Total</span>
+                        <span>PKR {{ negotiated_order.negotiated_price }}</span>
+                    </div>
+                </div>
+
+                <button type="submit"
+                    class="w-full mt-8 bg-gradient-to-r from-blue-600 to-pink-600 text-white py-6 rounded-2xl text-xl font-bold hover:shadow-xl transition">
+                    <i class="fas fa-lock mr-2"></i>Place Order
+                </button>
+
+                <p class="text-center text-sm text-gray-500 mt-6">
+                    Estimated Delivery: <strong>3-5 Business Days</strong>
+                </p>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

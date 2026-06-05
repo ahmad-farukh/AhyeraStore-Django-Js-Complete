@@ -1,0 +1,151 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Customer - Messages</title>
+  <link href="{% static 'css/output.css' %}" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    .msg-time {
+      font-size: 0.75rem;
+    }
+
+    .unread-badge {
+      background-color: #dc2626;
+      color: white;
+      font-size: 0.75rem;
+      border-radius: 9999px;
+      padding: 0.25rem 0.5rem;
+      position: absolute;
+      top: -0.25rem;
+      right: -0.25rem;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+
+  <div class="container mx-auto px-4 py-6 max-w-6xl">
+    <div class="bg-white rounded-xl shadow-md p-5 mb-6">
+      <div class="flex items-center justify-between">
+        <h1 class="text-2xl md:text-3xl font-bold text-blue-900">Messages</h1>
+        <div class="relative">
+          <i class="fas fa-bell text-3xl text-blue-900"></i>
+          {% if total_unread > 0 %}
+          <span id="totalBadge" class="unread-badge">{{ total_unread }}</span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Conversations List -->
+      <div class="lg:col-span-1">
+        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+          <div class="bg-blue-900 text-white p-4 font-bold text-center">
+            Active Conversations
+          </div>
+          <div id="conversationsList" class="max-h-screen overflow-y-auto">
+            {% for conv in conversations %}
+            <a href="?user_id={{ conv.partner.id }}"
+              class="block p-4 border-b hover:bg-gray-50 transition {% if selected_conversation.id == conv.partner.id %}bg-blue-50 border-l-4 border-l-blue-900{% endif %}">
+              <div class="flex items-center gap-3">
+                <div
+                  class="w-10 h-10 rounded-full bg-blue-100 text-blue-900 flex items-center justify-center font-bold">
+                  {% if conv.partner.seller_profile.business_logo %}
+                  <img src="{{ conv.partner.seller_profile.business_logo.url }}" alt="{{ conv.partner.username }}"
+                    class="w-full h-full object-cover rounded-full">
+                  {% else %}
+                  {{ conv.partner.username|make_list|first|upper }}
+                  {% endif %}
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex justify-between items-baseline mb-1">
+                    <h4 class="font-bold text-gray-900 truncate">{{ conv.partner.username }}</h4>
+                    <span class="text-xs text-gray-500">{{ conv.last_message.created_at|timesince }} ago</span>
+                  </div>
+                  <p
+                    class="text-sm text-gray-600 truncate {% if conv.unread_count > 0 %}font-bold text-black{% endif %}">
+                    {% if conv.last_message.sender == request.user %}
+                    <i class="fas fa-reply text-xs mr-1"></i>
+                    {% endif %}
+                    {{ conv.last_message.message }}
+                  </p>
+                </div>
+                {% if conv.unread_count > 0 %}
+                <span class="bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full">{{ conv.unread_count}}</span>
+                {% endif %}
+              </div>
+            </a>
+            {% empty %}
+            <div class="p-8 text-center text-gray-500">
+              <p>No conversations yet.</p>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Chat Area -->
+      <div class="lg:col-span-2">
+        <div id="chatArea" class="bg-white rounded-xl shadow-md h-full min-h-96 flex flex-col">
+          {% if selected_conversation %}
+          <div class="bg-blue-900 text-white p-5 rounded-t-xl flex items-center justify-between">
+            <div class="flex items-center gap-4">
+              <div
+                class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-blue-900 font-bold text-xl">
+                {% if selected_conversation.seller_profile.business_logo %}
+                <img src="{{ selected_conversation.seller_profile.business_logo.url }}"
+                  alt="{{ selected_conversation.username }}" class="w-full h-full object-cover rounded-full">
+                {% else %}
+                {{ selected_conversation.username|make_list|first|upper }}
+                {% endif %}
+              </div>
+              <div>
+                <h3 class="font-bold text-lg" id="chatWith">{{ selected_conversation.username }}</h3>
+                <p class="text-sm opacity-90">Active now</p>
+              </div>
+            </div>
+          </div>
+
+          <div id="messagesContainer" class="flex-1 p-6 overflow-y-auto bg-gray-50 flex flex-col gap-4">
+            {% for msg in chat_messages %}
+            <div class="flex {% if msg.sender == request.user %}justify-end{% else %}justify-start{% endif %}">
+              <div
+                class="max-w-[70%] rounded-xl p-3 {% if msg.sender == request.user %}bg-blue-900 text-white rounded-br-none{% else %}bg-white border border-gray-200 rounded-bl-none{% endif %}">
+                <p class="text-sm">{{ msg.message }}</p>
+                <span class="text-[10px] opacity-70 block text-right mt-1">{{ msg.created_at|date:"g:i A" }}</span>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+
+          <div class="p-4 border-t bg-white">
+            <form method="post" class="flex gap-3">
+              {% csrf_token %}
+              <input type="hidden" name="recipient_id" value="{{ selected_conversation.id }}">
+              <input type="text" name="message" id="messageInput" placeholder="Type your message..." required
+                class="flex-1 px-5 py-3 border border-gray-300 rounded-xl focus:outline-none focus:border-blue-900">
+              <button type="submit" class="bg-blue-900 text-white px-6 py-3 rounded-xl hover:bg-blue-800 transition">
+                <i class="fas fa-paper-plane"></i>
+              </button>
+            </form>
+          </div>
+          {% else %}
+          <div class="flex-1 flex flex-col items-center justify-center text-gray-500 p-10">
+            <i class="far fa-comments text-6xl mb-4 text-gray-300"></i>
+            <h3 class="text-xl font-bold text-gray-700">Select a Conversation</h3>
+            <p>Choose a seller from the list to start messaging.</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+
+</html>

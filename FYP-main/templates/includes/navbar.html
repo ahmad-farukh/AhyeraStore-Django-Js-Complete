@@ -1,0 +1,96 @@
+{% load static %}
+
+<nav class="sticky top-0 z-50 bg-white shadow-lg backdrop-blur-lg bg-opacity-95">
+    <div class="max-w-7xl mx-auto px-4 lg:px-6">
+        <div class="flex items-center justify-between py-3 border-b border-gray-100">
+            <div class="flex items-center gap-4">
+                <a href="{% url 'core:home' %}" class="flex items-center gap-4">
+                    <div
+                        class="w-10 h-10 bg-blue-700 rounded-full flex items-center justify-center text-white text-xl font-bold ai-glow">
+                        AS
+                    </div>
+                    <span class="text-xl lg:text-2xl font-bold text-blue-700 ">Ahyera Store</span>
+                </a>
+            </div>
+
+            <div class="flex items-center gap-4 lg:gap-6">
+                <form action="{% url 'products:list' %}" method="get"
+                    class="hidden lg:flex items-center bg-gray-100 rounded-full px-4 py-2">
+                    <input type="text" name="q" placeholder="AI Smart Search..."
+                        class="bg-transparent outline-none w-64 text-sm">
+                    <button type="submit"><i class="fas fa-search text-gray-500 ml-2"></i></button>
+                </form>
+
+                {% if user.is_authenticated %}
+                <div class="relative">
+                    <button id="user-menu-btn"
+                        class="flex items-center gap-2 text-gray-700 font-medium hover:text-blue-600 transition focus:outline-none">
+                        {% if user.seller_profile.business_logo %}
+                        <img src="{{ user.seller_profile.business_logo.url }}" alt="{{ user.username }}"
+                            class="w-6 h-6 rounded-full object-cover">
+                        {%   elif user.customer_profile.profile_image %}
+                        <img src="{{ user.customer_profile.profile_image.url }}" alt="{{ user.username }}"
+                            class="w-6 h-6 rounded-full object-cover">
+                        {% else %}
+                        <i class="fas fa-user-circle text-xl"></i>
+                        {% endif %}
+                        <span class="hidden sm:inline">{{ user.username|title }}</span>
+                        <i class="fas fa-chevron-down text-xs ml-1 transition-transform duration-200"
+                            id="user-menu-icon"></i>
+                    </button>
+
+                    <div id="user-dropdown"
+                        class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-100 hidden z-50 p-2 transform origin-top-right transition-all duration-200 ease-out">
+                        {% if user.seller_profile %}
+                        <a href="{% url 'sellers:dashboard' %}"
+                            class="block px-4 py-2 text-gray-700 hover:bg-gray-50 rounded-lg transition">Seller
+                            Dashboard</a>
+                        {% endif %}
+                        <a href="{% url 'customers:dashboard' %}"
+                            class="block px-4 py-2 text-gray-700 hover:bg-gray-50 rounded-lg transition">Dashboard</a>
+                        <a href="{% url 'customers:profile' %}"
+                            class="block px-4 py-2 text-gray-700 hover:bg-gray-50 rounded-lg transition">My Profile</a>
+                        <a href="{% url 'customers:orders' %}"
+                            class="block px-4 py-2 text-gray-700 hover:bg-gray-50 rounded-lg transition">My Orders</a>
+                        <div class="border-t border-gray-100 my-1"></div>
+                        <a href="{% url 'authentication:logout' %}"
+                            class="block px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition">Logout</a>
+                    </div>
+                </div>
+                {% else %}
+                <a href="{% url 'authentication:login' %}"
+                    class="hidden lg:block bg-blue-600 text-white px-6 py-2 rounded-full font-medium hover:bg-blue-700 transition">
+                    Login
+                </a>
+                {% endif %}
+<a href="{% url 'customers:wishlist' %}" class="relative group">
+    <!-- 'far' ki jagah 'fas' kar diya taake heart andar se poora fill ho jaye -->
+    <i class="fas fa-heart text-xl lg:text-2xl text-red-600 hover:text-red-800 transition duration-300"></i>
+</a>
+
+                <a href="{% url 'customers:cart' %}" class="relative">
+                    <i class="fas fa-shopping-cart text-xl lg:text-2xl text-gray-700 hover:text-blue-600"></i>
+                    {% if user.is_authenticated and user.cart.get_total_items > 0 %}
+                    <span
+                        class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                        {{ user.cart.get_total_items }}
+                    </span>
+                    {% endif %}
+                </a>
+            </div> 
+        </div>
+
+        <div class="flex items-center justify-between py-4">
+            <div class="hidden lg:flex items-center gap-8 mx-auto">
+                <a href="{% url 'products:list' %}" class="text-gray-700 font-medium hover:text-blue-600 transition">All
+                    Products</a>
+            
+                <a href="{% url 'customers:ai_search' %}"
+                    class="hidden lg:flex items-center gap-2 text-red-600 font-medium hover:text-purple-700 transition">
+                    <i class="fas fa-camera"></i>
+                    Visual Search
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>

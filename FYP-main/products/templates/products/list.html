@@ -1,0 +1,245 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Shop - Ahyera Store{% endblock %}
+
+{% block extra_css %}
+<style>
+  .font-heading {
+    font-family: 'Playfair Display', serif;
+  }
+
+  .font-body {
+    font-family: 'Inter', sans-serif;
+  }
+
+  /* Custom scrollbar for filters */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #ddd;
+    border-radius: 4px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #ccc;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="bg-white border-b">
+  <div class="max-w-7xl mx-auto px-4 py-4 text-sm">
+    <a href="{% url 'core:home' %}" class="text-gray-500 hover:text-pink-600">Home</a>
+    <i class="fas fa-chevron-right mx-2 text-gray-400"></i>
+    <span class="text-pink-600 font-medium">All Products</span>
+  </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 py-8">
+  <div class="flex flex-col lg:flex-row gap-8">
+
+    <aside class="lg:w-72 bg-white rounded-xl shadow-sm p-6 h-fit border border-gray-100 lg:sticky lg:top-24 relative z-10">
+      <div class="flex justify-between items-center mb-6">
+        <h3 class="text-xl font-bold">Filters</h3>
+        <a href="{% url 'products:list' %}" class="text-sm text-pink-600 font-medium hover:underline">Clear All</a>
+      </div>
+
+      <form method="get" action="{% url 'products:list' %}">
+        {% if request.GET.q %}
+        <input type="hidden" name="q" value="{{ request.GET.q }}">
+        {% endif %}
+        {% if request.GET.sort %}
+        <input type="hidden" name="sort" value="{{ request.GET.sort }}">
+        {% endif %}
+
+        <div class="mb-8">
+          <h4 class="font-semibold mb-4 text-gray-800">Category</h4>
+          <div class="space-y-3 text-gray-700 max-h-60 overflow-y-auto custom-scrollbar pr-2">
+            {% for category in categories %}
+            <label class="flex items-center gap-3 cursor-pointer group hover:bg-gray-50 p-1 rounded transition">
+              <input type="checkbox" name="category" value="{{ category.slug }}"
+                class="w-5 h-5 text-pink-600 rounded border-gray-300 focus:ring-pink-500" 
+                {% if category.slug in selected_categories %}checked{% endif %}>
+              <span class="flex-1 group-hover:text-pink-600">{{ category.name }}</span>
+              <span class="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">{{category.items_count|default:"0" }}</span>
+            </label>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="mb-8">
+          <h4 class="font-semibold mb-4 text-gray-800">Price Range</h4>
+          <div class="space-y-3 text-gray-700">
+            <label class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-1 rounded transition">
+              <input type="radio" name="price_range" value="0-50000" class="w-5 h-5 text-pink-600 focus:ring-pink-500"
+                {% if request.GET.price_range == '0-50000' %}checked{% endif %}>
+              <span>Under PKR 50,000</span>
+            </label>
+            <label class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-1 rounded transition">
+              <input type="radio" name="price_range" value="50000-100000"
+                class="w-5 h-5 text-pink-600 focus:ring-pink-500" 
+                {% if request.GET.price_range == '50000-100000' %}checked{% endif %}>
+              <span>PKR 50k - 100k</span>
+            </label>
+            <label class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-1 rounded transition">
+              <input type="radio" name="price_range" value="100000-200000"
+                class="w-5 h-5 text-pink-600 focus:ring-pink-500" 
+                {% if request.GET.price_range == '100000-200000' %}checked{% endif %}>
+              <span>PKR 100k - 200k</span>
+            </label>
+            <label class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-1 rounded transition">
+              <input type="radio" name="price_range" value="200000-plus"
+                class="w-5 h-5 text-pink-600 focus:ring-pink-500" 
+                {% if request.GET.price_range == '200000-plus' %}checked{% endif %}>
+              <span>Above PKR 200k</span>
+            </label>
+          </div>
+        </div>
+
+        <button type="submit"
+          class="w-full bg-gray-900 text-white py-3 rounded-xl font-bold hover:bg-gray-800 transition shadow-md">
+          Apply Filters
+        </button>
+      </form>
+    </aside>
+
+    <div class="flex-1 relative z-0">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+        <p class="text-gray-600 font-medium">{{ total_count }} Products Found</p>
+
+        <form method="get" action="{% url 'products:list' %}" class="flex items-center">
+          {% for key, value in request.GET.items %}
+          {% if key != 'sort' %}
+          <input type="hidden" name="{{ key }}" value="{{ value }}">
+          {% endif %}
+          {% endfor %}
+
+          <label class="mr-3 text-sm text-gray-600">Sort by:</label>
+          <select name="sort" onchange="this.form.submit()"
+            class="px-4 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-pink-600 text-sm cursor-pointer">
+            <option value="-created_at" {% if request.GET.sort == '-created_at' %}selected{% endif %}>Newest First</option>
+            <option value="price" {% if request.GET.sort == 'price' %}selected{% endif %}>Price: Low to High</option>
+            <option value="-price" {% if request.GET.sort == '-price' %}selected{% endif %}>Price: High to Low</option>
+          </select>
+        </form>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for product in products %}
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition group flex flex-col h-full relative">
+          <div class="aspect-square relative overflow-hidden bg-gray-100 z-0">
+            <a href="{% url 'products:detail' product.slug %}">
+              {% if product.main_image %}
+              <img src="{{ product.main_image.url }}" alt="{{ product.name }}"
+                class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+              {% else %}
+              <div class="w-full h-full flex items-center justify-center text-gray-400">
+                <i class="fas fa-image text-4xl"></i>
+              </div>
+              {% endif %}
+            </a>
+
+            {% if product.discount_percentage > 0 %}
+            <span class="absolute top-3 left-3 bg-red-600 text-white px-2 py-1 rounded text-xs font-bold shadow-md z-10">
+              -{{ product.discount_percentage }}%
+            </span>
+            {% endif %}
+
+            <div class="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition duration-300 translate-x-4 group-hover:translate-x-0 z-10">
+              <form method="post" action="{% url 'customers:wishlist_add' product.id %}">
+                {% csrf_token %}
+                <button type="submit"
+                  class="w-9 h-9 bg-white rounded-full shadow-md flex items-center justify-center text-gray-500 hover:text-pink-600 hover:bg-pink-50 transition"
+                  title="Add to Wishlist">
+                  <i class="far fa-heart"></i>
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <div class="p-4 flex flex-col flex-1">
+            <div class="text-xs text-gray-500 mb-1">{{ product.category.name }}</div>
+            <h3 class="font-bold text-gray-900 mb-2 line-clamp-2 hover:text-pink-600 transition">
+              <a href="{% url 'products:detail' product.slug %}">{{ product.name }}</a>
+            </h3>
+
+            <div class="mt-auto pt-3 border-t border-gray-50">
+              <div class="mb-3">
+                {% if product.discount_percentage > 0 %}
+                <span class="text-xs text-gray-400 line-through block">PKR {{ product.price|floatformat:0 }}</span>
+                <span class="text-lg font-bold text-pink-600">PKR {{ product.get_discount_price|floatformat:0 }}</span>
+                {% else %}
+                <span class="text-lg font-bold text-gray-900">PKR {{ product.price|floatformat:0 }}</span>
+                {% endif %}
+              </div>
+
+              <form method="post" action="{% url 'customers:cart_add' product.id %}">
+                {% csrf_token %}
+                <button type="submit"
+                  class="w-full bg-white border-2 border-gray-900 text-gray-900 py-2 rounded-lg font-bold hover:bg-gray-900 hover:text-white transition text-sm">
+                  Add to Cart
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+        {% empty %}
+        <div class="col-span-full text-center py-20 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
+          <div class="w-20 h-20 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-400">
+            <i class="fas fa-box-open text-3xl"></i>
+          </div>
+          <h3 class="text-xl font-bold text-gray-800">No products found</h3>
+          <p class="text-gray-500 mt-2 mb-6">Try adjusting your filters or search criteria.</p>
+          <a href="{% url 'products:list' %}"
+            class="bg-pink-600 text-white px-6 py-2.5 rounded-full font-bold hover:bg-pink-700 transition shadow-lg">
+            Clear All Filters
+          </a>
+        </div>
+        {% endfor %}
+      </div>
+
+      {% if products.has_other_pages %}
+      <div class="flex justify-center gap-2 mt-12">
+        {% if products.has_previous %}
+        <a href="?page={{ products.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+          class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-300 hover:bg-gray-50 transition text-gray-600">
+          <i class="fas fa-chevron-left"></i>
+        </a>
+        {% endif %}
+
+        <span class="px-4 py-2 bg-gray-900 text-white rounded-lg font-medium flex items-center">
+          Page {{ products.number }} of {{ products.paginator.num_pages }}
+        </span>
+
+        {% if products.has_next %}
+        <a href="?page={{ products.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+          class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-300 hover:bg-gray-50 transition text-gray-600">
+          <i class="fas fa-chevron-right"></i>
+        </a>
+        {% endif %}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<footer class="bg-gray-900 text-white py-12 mt-16">
+  <div class="max-w-7xl mx-auto px-4 text-center">
+    <h1 class="text-4xl font-heading font-bold mb-3">Ahyera Store</h1>
+    <p class="text-gray-400">Pakistan's Most Trusted Luxury Fashion Destination</p>
+    <p class="text-gray-500 text-sm mt-8">© 2025 Ahyera Store. All rights reserved.</p>
+  </div>
+</footer>
+{% endblock %}
+
+{% block extra_js %}
+{{ products_data|json_script:"products-data" }}
+<script src="{% static 'js/products.js' %}"></script>
+{% endblock %}

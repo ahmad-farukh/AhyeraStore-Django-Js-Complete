@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Order Chat • Ahyera Store{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-10">
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-800">Chat with Seller</h1>
+            <p class="text-gray-600 mt-1">Order: <span class="font-semibold">#{{ order.order_number }}</span></p>
+        </div>
+        <a href="{% url 'customers:orders' %}"
+            class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-3 rounded-xl font-medium inline-block">
+            Back
+        </a>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+        <div class="bg-blue-900 text-white p-5 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <div
+                    class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-blue-900 font-bold text-xl">
+                    {{ seller.username|make_list|first|upper }}
+                </div>
+                <div>
+                    <h3 class="font-bold text-lg">{{ seller.username }}</h3>
+                    <p class="text-sm opacity-90">Order Support</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-6 bg-gray-50 flex flex-col gap-4 max-h-[60vh] overflow-y-auto">
+            {% for msg in chat_messages %}
+            <div class="flex {% if msg.sender == request.user %}justify-end{% else %}justify-start{% endif %}">
+                <div
+                    class="max-w-[75%] rounded-xl p-3 {% if msg.sender == request.user %}bg-blue-900 text-white rounded-br-none{% else %}bg-white border border-gray-200 rounded-bl-none{% endif %}">
+                    <p class="text-sm">{{ msg.message }}</p>
+                    <span class="text-[10px] opacity-70 block text-right mt-1">{{ msg.created_at|date:"g:i A" }}</span>
+                </div>
+            </div>
+            {% empty %}
+            <div class="text-center text-gray-500 py-10">
+                <i class="far fa-comments text-5xl mb-4 text-gray-300"></i>
+                <p class="font-medium">No messages yet. Start the conversation.</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="p-4 border-t bg-white">
+            <form method="post" class="flex gap-3">
+                {% csrf_token %}
+                <input type="text" name="message" placeholder="Type your message..." required
+                    class="flex-1 px-5 py-3 border border-gray-300 rounded-xl focus:outline-none focus:border-blue-900">
+                <button type="submit" class="bg-blue-900 text-white px-6 py-3 rounded-xl hover:bg-blue-800 transition">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

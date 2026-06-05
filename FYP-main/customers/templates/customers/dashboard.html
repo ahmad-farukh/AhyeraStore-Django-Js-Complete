@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}My Account - Ahyera Store{% endblock %}
+
+{% block extra_css %}
+<style>
+    .font-heading {
+        font-family: 'Playfair Display', serif;
+    }
+
+    .dashboard-tile {
+        transition: all 0.3s ease;
+    }
+
+    .dashboard-tile:hover {
+        transform: translateY(-8px);
+    }
+
+    @media (max-width: 768px) {
+        .border-t-4 {
+            border-left: 4px dotted #f472b6 !important;
+            border-top: none !important;
+            height: 60px;
+            width: 4px !important;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-10">
+
+    <!-- Welcome -->
+    <div class="text-center mb-10">
+        <h2 class="text-4xl md:text-5xl font-heading font-bold text-gray-800 mb-2">
+            Welcome back, {{ user.first_name|default:user.username }}!
+        </h2>
+        <p class="text-xl text-gray-600">Manage your account and orders</p>
+    </div>
+
+    <!-- Dashboard Tiles -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <a href="{% url 'customers:orders' %}"
+            class="dashboard-tile bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition text-center">
+            <i class="fas fa-box text-5xl text-pink-600 mb-4"></i>
+            <h3 class="text-2xl font-bold">My Orders</h3>
+            <p class="text-gray-600 mt-2">{{ active_orders_count }} Active • {{ completed_orders_count }} Completed</p>
+        </a>
+
+        <a href="{% url 'customers:wishlist' %}"
+            class="dashboard-tile bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition text-center">
+            <i class="fas fa-heart text-5xl text-red-500 mb-4"></i>
+            <h3 class="text-2xl font-bold">Wishlist</h3>
+            <p class="text-gray-600 mt-2">{{ wishlist_count }} items</p>
+        </a>
+
+        <a href="{% url 'customers:profile' %}"
+            class="dashboard-tile bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition text-center">
+            <i class="fas fa-user text-5xl text-blue-600 mb-4"></i>
+            <h3 class="text-2xl font-bold">Profile</h3>
+            <p class="text-gray-600 mt-2">Edit personal info</p>
+        </a>
+
+        <a href="{% url 'customers:addresses' %}"
+            class="dashboard-tile bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition text-center">
+            <i class="fas fa-map-marker-alt text-5xl text-green-600 mb-4"></i>
+            <h3 class="text-2xl font-bold">Addresses</h3>
+            <p class="text-gray-600 mt-2">{{ addresses_count }} saved addresses</p>
+        </a>
+    </div>
+
+    <!-- Recently Viewed -->
+    {% if recently_viewed %}
+    <div class="bg-white rounded-3xl shadow-xl p-8">
+        <h3 class="text-3xl font-bold mb-8 text-center text-pink-600">Recently Viewed</h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {% for product in recently_viewed %}
+            <a href="{% url 'products:detail' product.slug %}" class="group">
+                <div class="aspect-square relative overflow-hidden rounded-xl mb-3">
+                    {% if product.main_image %}
+                    <img src="{{ product.main_image.url }}" alt="{{ product.name }}"
+                        class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
+                    {% else %}
+                    <div class="w-full h-full bg-gray-200 flex items-center justify-center">
+                        <i class="fas fa-image text-4xl text-gray-400"></i>
+                    </div>
+                    {% endif %}
+                </div>
+                <h4 class="font-bold text-gray-800 line-clamp-2">{{ product.name }}</h4>
+                <p class="text-pink-600 font-bold mt-1">PKR {{ product.get_discount_price|floatformat:0 }}</p>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+<div id="editModal" class="fixed inset-0 bg-black bg-opacity-70 hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-screen overflow-y-auto p-8">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-3xl font-bold text-blue-900">Edit Product</h2>
+            <button onclick="document.getElementById('editModal').classList.add('hidden')"
+                class="text-gray-500 hover:text-red-500 text-2xl">&times;</button>
+        </div>
+
+        <form id="editForm" method="post" enctype="multipart/form-data" action="">
+            {% csrf_token %}
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-blue-900 font-semibold mb-2">Product Name</label>
+                    <input type="text" name="name" id="editTitle"
+                        class="w-full px-5 py-4 border-2 border-gray-300 rounded-xl focus:border-blue-900 outline-none"
+                        required />
+                </div>
+                <div>
+                    <label class="block text-blue-900 font-semibold mb-2">Price</label>
+                    <input type="number" name="price" id="editPrice"
+                        class="w-full px-5 py-4 border-2 border-gray-300 rounded-xl focus:border-blue-900 outline-none"
+                        required />
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <label class="block text-blue-900 font-semibold mb-2">Description</label>
+                <textarea name="description" id="editDescription" rows="4"
+                    class="w-full px-5 py-4 border-2 border-gray-300 rounded-xl focus:border-blue-900 outline-none resize-none"></textarea>
+            </div>
+
+            <div class="grid grid-cols-2 gap-6 mt-4">
+                <div>
+                    <label class="block text-blue-900 font-semibold mb-2">Stock</label>
+                    <input type="number" name="stock" id="editStock"
+                        class="w-full px-5 py-4 border-2 border-gray-300 rounded-xl focus:border-blue-900 outline-none"
+                        required />
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-4 mt-8">
+                <button type="button" onclick="document.getElementById('editModal').classList.add('hidden')"
+                    class="px-8 py-4 bg-gray-600 text-white rounded-xl hover:bg-gray-700">Cancel</button>
+                <button type="submit"
+                    class="px-8 py-4 bg-blue-900 text-white rounded-xl hover:bg-blue-800 font-semibold">Save
+                    Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openEditModal(id, name, price, stock, description) {
+        // Populate form fields
+        document.getElementById('editTitle').value = name;
+        document.getElementById('editPrice').value = price;
+        document.getElementById('editStock').value = stock;
+        document.getElementById('editDescription').value = description;
+
+        // Set the form action dynamically to the update URL
+        document.getElementById('editForm').action = "/products/" + id + "/update/";
+
+        // Show modal
+        document.getElementById('editModal').classList.remove('hidden');
+    }
+</script>
+{% endblock %}

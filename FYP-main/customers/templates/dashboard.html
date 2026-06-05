@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Account - Ahyera Store</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="dashboard.js"></script>
+
+  <!-- Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="style.css" />
+
+  <style>
+    .font-heading {
+      font-family: 'Playfair Display', serif;
+    }
+
+    .font-body {
+      font-family: 'Inter', sans-serif;
+    }
+
+    .dashboard-tile {
+      transition: all 0.3s ease;
+    }
+
+    .dashboard-tile:hover {
+      transform: translateY(-8px);
+    }
+
+    /* Timeline Dots */
+    @media (max-width: 768px) {
+      .border-t-4 {
+        border-left: 4px dotted #f472b6 !important;
+        border-top: none !important;
+        height: 60px;
+        width: 4px !important;
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-gray-50 font-body min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-white shadow-sm border-b">
+    <div class="max-w-7xl mx-auto px-4 py-6 flex justify-between items-center">
+      <h1 class="text-3xl font-heading text-pink-600">Ahyera Store</h1>
+      <a href="index.html" class="text-black hover:text-pink-600"><i class="fas fa-home mr-2"></i>Back to Home</a>
+    </div>
+  </header>
+
+  <div class="max-w-7xl mx-auto px-4 py-10">
+
+    <!-- Welcome -->
+    <div class="text-center mb-10">
+      <h2 class="text-4xl md:text-5xl font-heading font-bold text-gray-800 mb-2">Welcome back, Fatima!</h2>
+      <p class="text-xl text-gray-600">Manage your account and orders</p>
+    </div>
+
+    <!-- Dashboard Tiles -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+      <a href="./my_orders.html"
+        class="dashboard-tile bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition text-center">
+        <i class="fas fa-box text-5xl text-pink-600 mb-4"></i>
+        <h3 class="text-2xl font-bold">My Orders</h3>
+        <p class="text-gray-600 mt-2">3 Active • 12 Completed</p>
+      </a>
+
+      <a href="./whishlist.html"
+        class="dashboard-tile bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition text-center">
+        <i class="fas fa-heart text-5xl text-red-500 mb-4"></i>
+        <h3 class="text-2xl font-bold">Wishlist</h3>
+        <p class="text-gray-600 mt-2">items</p>
+      </a>
+
+      <a href="./customer_profile.html"
+        class="dashboard-tile bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition text-center">
+        <i class="fas fa-user text-5xl text-blue-600 mb-4"></i>
+        <h3 class="text-2xl font-bold">Profile</h3>
+        <p class="text-gray-600 mt-2">Edit personal info</p>
+      </a>
+
+      <a href="./customer_addresses.html"
+        class="dashboard-tile bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition text-center">
+        <i class="fas fa-map-marker-alt text-5xl text-green-600 mb-4"></i>
+        <h3 class="text-2xl font-bold">Addresses</h3>
+        <p class="text-gray-600 mt-2">2 saved addresses</p>
+      </a>
+    </div>
+
+    <!-- Recently Viewed -->
+    <div class="bg-white rounded-3xl shadow-xl p-8">
+      <h3 class="text-3xl font-bold mb-8 text-center text-pink-600">Recently Viewed</h3>
+      <div id="recently-viewed" class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <!-- JS will fill this -->
+      </div>
+    </div>
+
+  </div>
+
+  <!-- JS -->
+</body>
+
+</html>
