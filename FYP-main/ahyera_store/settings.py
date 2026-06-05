@@ -17,10 +17,11 @@ SECRET_KEY = config(
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG", default=True, cast=bool)
+ALLOWED_HOSTS = ['ahyerastore-django-js-complete-production.up.railway.app', 'localhost', '127.0.0.1']
 
-ALLOWED_HOSTS = ['*']
-
-CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", default="", cast=Csv())
+CSRF_TRUSTED_ORIGINS = [
+    'https://ahyerastore-django-js-complete-production.up.railway.app',
+]
 
 
 # Application definition
